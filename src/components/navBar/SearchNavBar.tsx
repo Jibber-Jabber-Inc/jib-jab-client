@@ -24,6 +24,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     grow: {
       flexGrow: 1,
+      marginBottom: "70px",
     },
     menuButton: {
       marginRight: theme.spacing(2),
@@ -171,7 +172,7 @@ export const PrimarySearchAppBar = () => {
 
   return (
     <div className={classes.grow}>
-      <AppBar position="static">
+      <AppBar position="fixed">
         <Toolbar>
           <IconButton
             edge="start"
