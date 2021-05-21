@@ -5,7 +5,7 @@ import { useCreatePost } from "../../api/useCreatePost";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    button: {
+    buttonContainer: {
       margin: theme.spacing(1),
     },
   })
@@ -44,7 +44,7 @@ export const CreatePost = () => {
           type={"submit"}
           variant="contained"
           color="primary"
-          className={classes.button}
+          className={classes.buttonContainer}
         >
           {isLoading ? "Loading..." : "Send"}
         </Button>
