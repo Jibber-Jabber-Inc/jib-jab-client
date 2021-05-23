@@ -1,18 +1,20 @@
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
 import MLink from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { errorMessages, urls } from "../../constants";
 import { Link, useHistory } from "react-router-dom";
 import { useSignUp } from "../../api/auth";
+import { FormField } from "../forms/FormField";
+import { ErrorAlert } from "../ErrorAlert";
+import React from "react";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -35,6 +37,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const schema = yup.object({
+  username: yup.string().required(errorMessages.required),
+  firstName: yup.string().required(errorMessages.required),
+  lastName: yup.string().required(errorMessages.required),
   email: yup
     .string()
     .email(errorMessages.email)
@@ -48,17 +53,18 @@ export const SignUp = () => {
   const classes = useStyles();
   const history = useHistory();
 
-  const { mutate } = useSignUp();
+  const { mutateAsync, isError } = useSignUp();
 
   const { control, handleSubmit } = useForm<SignUpFormData>({
     resolver: yupResolver(schema),
     mode: "onBlur",
   });
 
-  const onSubmit = handleSubmit((data) => {
-    console.log(data);
-    mutate(data);
-    history.push(`/${urls.signIn}`);
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      await mutateAsync(data);
+      history.push(urls.logIn);
+    } catch (e) {}
   });
 
   return (
@@ -72,39 +78,42 @@ export const SignUp = () => {
         </Typography>
         <form className={classes.form} onSubmit={onSubmit}>
           <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <Controller
-                name={"email"}
+            <Grid item xs={6}>
+              <FormField
                 control={control}
-                render={({ field, fieldState: { invalid, error } }) => (
-                  <TextField
-                    variant="outlined"
-                    fullWidth
-                    label="Email Address"
-                    autoComplete="email"
-                    error={invalid}
-                    helperText={error?.message}
-                    {...field}
-                  />
-                )}
+                label={"First Name"}
+                name={"firstName"}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <FormField
+                control={control}
+                label={"Last Name"}
+                name={"lastName"}
               />
             </Grid>
             <Grid item xs={12}>
-              <Controller
-                name={"password"}
+              <FormField
                 control={control}
-                render={({ field, fieldState: { invalid, error } }) => (
-                  <TextField
-                    variant="outlined"
-                    type="password"
-                    fullWidth
-                    label="Password"
-                    autoComplete="current-password"
-                    error={invalid}
-                    helperText={error?.message}
-                    {...field}
-                  />
-                )}
+                label={"Email"}
+                name={"email"}
+                autoComplete={"email"}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormField
+                control={control}
+                label={"Username"}
+                name={"username"}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormField
+                control={control}
+                label={"Password"}
+                name={"password"}
+                type={"password"}
+                autoComplete={"current-password"}
               />
             </Grid>
           </Grid>
@@ -119,13 +128,14 @@ export const SignUp = () => {
           </Button>
           <Grid container justify="flex-end">
             <Grid item>
-              <Link to={`/${urls.signIn}`}>
+              <Link to={urls.logIn}>
                 <MLink variant="body2">Already have an account? Sign in</MLink>
               </Link>
             </Grid>
           </Grid>
         </form>
       </div>
+      <ErrorAlert error={isError}>There was an error!</ErrorAlert>
     </Container>
   );
 };

@@ -1,21 +1,22 @@
 import React from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
 import MLink from "@material-ui/core/Link";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { errorMessages, urls } from "../../constants";
 import { Link, useHistory } from "react-router-dom";
 import { useSignIn } from "../../api/auth";
-import { actions, useAppDispatch } from "../../store";
+import { actions, useAppDispatch, useAppSelector } from "../../store";
 import { ErrorAlert } from "../ErrorAlert";
+import { FormField } from "../forms/FormField";
+import { selectRedirectPath } from "../../store/slices/user";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -51,19 +52,17 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const schema = yup.object({
-  email: yup
-    .string()
-    .email(errorMessages.email)
-    .required(errorMessages.required),
+  username: yup.string().required(errorMessages.required),
   password: yup.string().required(errorMessages.required),
 });
 
 type SignInFormData = yup.InferType<typeof schema>;
 
-export const SignIn = () => {
+export const LogIn = () => {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useAppDispatch();
+  const redirectPath = useAppSelector(selectRedirectPath);
 
   const { mutateAsync, isLoading, isError } = useSignIn();
 
@@ -73,17 +72,10 @@ export const SignIn = () => {
   });
 
   const onSubmit = handleSubmit(async (data) => {
-    console.log(data);
     try {
-      // const signInRes = await mutateAsync(data);
-      // dispatch(actions.user.setUser(signInRes));
-
-      const mockUser = {
-        id: new Date().toISOString(),
-        email: data.email,
-      };
-      dispatch(actions.user.setUser(mockUser));
-      history.push(`/${urls.home}`);
+      const signInRes = await mutateAsync(data);
+      dispatch(actions.session.setUser(signInRes));
+      history.push(redirectPath);
     } catch (e) {}
   });
 
@@ -99,39 +91,24 @@ export const SignIn = () => {
             Sign in
           </Typography>
           <form className={classes.form} onSubmit={onSubmit}>
-            <Controller
-              name={"email"}
-              control={control}
-              render={({ field, fieldState: { invalid, error } }) => (
-                <TextField
-                  variant="outlined"
-                  fullWidth
-                  margin={"normal"}
-                  label="Email Address"
-                  autoComplete="email"
-                  error={invalid}
-                  helperText={error?.message}
-                  {...field}
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <FormField
+                  control={control}
+                  label={"Username"}
+                  name={"username"}
                 />
-              )}
-            />
-            <Controller
-              name={"password"}
-              control={control}
-              render={({ field, fieldState: { invalid, error } }) => (
-                <TextField
-                  variant="outlined"
-                  margin={"normal"}
-                  type="password"
-                  fullWidth
-                  label="Password"
-                  autoComplete="current-password"
-                  error={invalid}
-                  helperText={error?.message}
-                  {...field}
+              </Grid>
+              <Grid item xs={12}>
+                <FormField
+                  control={control}
+                  label={"Password"}
+                  name={"password"}
+                  type={"password"}
+                  autoComplete={"current-password"}
                 />
-              )}
-            />
+              </Grid>
+            </Grid>
             {/*<FormControlLabel*/}
             {/*  control={<Checkbox value="remember" color="primary" />}*/}
             {/*  label="Remember me"*/}
@@ -155,7 +132,7 @@ export const SignIn = () => {
                 {/*</MLink>*/}
               </Grid>
               <Grid item>
-                <Link to={`/${urls.signUp}`}>
+                <Link to={urls.signUp}>
                   <MLink variant="body2">
                     {"Don't have an account? Sign Up"}
                   </MLink>

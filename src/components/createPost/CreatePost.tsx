@@ -1,5 +1,5 @@
 import { Button, TextField } from "@material-ui/core";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, FormEventHandler, useState } from "react";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import { useCreatePost } from "../../api/useCreatePost";
 
@@ -22,7 +22,8 @@ export const CreatePost = () => {
     setPost(e.target.value);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit: FormEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault();
     mutate({ content });
   };
 

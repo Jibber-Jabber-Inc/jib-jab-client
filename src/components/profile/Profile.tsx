@@ -2,8 +2,6 @@ import { Avatar, Container, Grid, Typography } from "@material-ui/core";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import { useAppSelector } from "../../store";
 import { selectUser } from "../../store/slices/user";
-import { Redirect } from "react-router-dom";
-import { urls } from "../../constants";
 import { ChangePassword } from "../editProfile/ChangePassword";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -56,9 +54,7 @@ export const Profile = () => {
 
   const user = useAppSelector(selectUser);
 
-  if (!user) return <Redirect to={`/${urls.signIn}`} />;
-
-  const { email } = user;
+  const { email } = user!;
 
   return (
     <Container>

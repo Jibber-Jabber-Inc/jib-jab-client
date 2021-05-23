@@ -1,9 +1,10 @@
 export const urls = {
-  signUp: "sign-up",
-  signIn: "sign-in",
-  editProfile: "editProfile",
-  viewProfile: "profile",
-  home: "",
+  signUp: "/signup",
+  logIn: "/login",
+  editProfile: "/editProfile",
+  viewProfile: "/profile",
+  home: "/",
+  notFound: "/notfound",
 };
 
 export const errorMessages = {

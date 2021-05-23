@@ -3,9 +3,7 @@ import axios from "axios";
 
 export const usePosts = () =>
   useQuery<PostData[]>("posts", async () => {
-    const { data } = await axios.get<PostData[]>(
-      "http://localhost:8080/api/post"
-    );
+    const { data } = await axios.get<PostData[]>("/post/posts");
     return data;
   });
 

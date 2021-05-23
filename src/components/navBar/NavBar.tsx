@@ -16,6 +16,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import { useHistory, Link } from "react-router-dom";
 import { urls } from "../../constants";
+import { actions, useAppDispatch } from "../../store";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -86,8 +87,8 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export const NavBar = () => {
   const classes = useStyles();
-
   const history = useHistory();
+  const dispatch = useAppDispatch();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -103,7 +104,12 @@ export const NavBar = () => {
 
   const handleViewProfile = () => {
     handleMenuClose();
-    history.push(`/${urls.viewProfile}`);
+    history.push(urls.viewProfile);
+  };
+
+  const handleSignOut = () => {
+    handleMenuClose();
+    dispatch(actions.session.setUser(null));
   };
 
   const menuId = "primary-search-account-menu";
@@ -118,7 +124,7 @@ export const NavBar = () => {
       onClose={handleMenuClose}
     >
       <MenuItem onClick={handleViewProfile}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
     </Menu>
   );
 
@@ -127,7 +133,7 @@ export const NavBar = () => {
       <AppBar position="fixed">
         <Toolbar>
           <Link
-            to={`/${urls.home}`}
+            to={urls.home}
             style={{
               color: "white",
               textDecoration: "none",

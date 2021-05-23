@@ -5,9 +5,14 @@ import { NotExists } from "../components/notExists/NotExists";
 import { SignUp } from "../components/signUp/SignUp";
 import { makeStyles } from "@material-ui/core/styles";
 import { urls } from "../constants";
-import { SignIn } from "../components/signIn/SignIn";
-import { EditProfile } from "../components/editProfile/EditProfile";
+import { LogIn } from "../components/logIn/LogIn";
 import { Profile } from "../components/profile/Profile";
+import { actions, useAppDispatch, useAppSelector } from "../store";
+import { selectSession } from "../store/slices/user";
+import ProtectedRoute, {
+  ProtectedRouteProps,
+} from "../components/protectedRoute/ProtectedRoute";
+import { Redirect } from "react-router";
 
 const useStyles = makeStyles({
   root: {
@@ -17,24 +22,44 @@ const useStyles = makeStyles({
 
 const App = () => {
   const classes = useStyles();
+  const session = useAppSelector(selectSession);
+  const dispatch = useAppDispatch();
+
+  console.log({ session });
+
+  const defaultProtectedRouteProps: ProtectedRouteProps = {
+    isAuthenticated: session.isAuthenticated,
+    authenticationPath: urls.logIn,
+    redirectPath: session.redirectPath,
+    setRedirectPath: (path) => dispatch(actions.session.setRedirectPath(path)),
+  };
+
   return (
     <div className="App">
       <Switch>
-        <Route exact path={`/${urls.signUp}`} component={SignUp} />
-        <Route exact path={`/${urls.signIn}`} component={SignIn} />
+        <Route exact path={urls.notFound} component={NotExists} />
+        <Route exact path={urls.signUp} component={SignUp} />
+        <Route exact path={urls.logIn} component={LogIn} />
         <div>
           <NavBar />
           <div className={classes.root}>
-            <Route exact path={`/${urls.home}`} component={Home} />
-            <Route exact path={`/${urls.viewProfile}`} component={Profile} />
-            <Route
+            <ProtectedRoute
+              {...defaultProtectedRouteProps}
               exact
-              path={`/${urls.editProfile}`}
-              component={EditProfile}
+              path={urls.viewProfile}
+              component={Profile}
+            />
+            <ProtectedRoute
+              {...defaultProtectedRouteProps}
+              exact
+              path={urls.home}
+              component={Home}
             />
           </div>
         </div>
-        <Route component={NotExists} />
+
+        {/*not working*/}
+        <Redirect to={urls.notFound} />
       </Switch>
     </div>
   );

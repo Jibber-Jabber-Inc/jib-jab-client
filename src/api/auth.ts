@@ -1,7 +1,10 @@
 import { useMutation } from "react-query";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 
 export type SignUpReq = {
+  username: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
 };
@@ -13,13 +16,17 @@ export type SignUpRes = {
 };
 
 export const useSignUp = () => {
-  return useMutation<SignUpRes, Error, SignUpReq>((data) => {
-    return axios.post("http://localhost:8080/api/auth/signup", data);
+  return useMutation<SignUpRes, Error, SignUpReq>(async (data) => {
+    const { data: signUpRes } = await axios.post<
+      SignUpReq,
+      AxiosResponse<SignUpRes>
+    >("/user/auth/register", data);
+    return signUpRes;
   });
 };
 
 export type SignInReq = {
-  email: string;
+  username: string;
   password: string;
 };
 
@@ -30,11 +37,13 @@ export type SignInRes = {
 };
 
 export const useSignIn = () => {
-  return useMutation<SignInRes, Error, SignInReq>((data) => {
-    return axios.post<SignInReq, SignInRes>(
-      "http://localhost:8080/api/auth/signin",
-      data
-    );
+  return useMutation<SignInRes, Error, SignInReq>(async (data) => {
+    const { data: signInRes } = await axios.post<
+      SignInReq,
+      AxiosResponse<SignInRes>
+    >("/user/auth/login", data);
+    console.log(signInRes);
+    return signInRes;
   });
 };
 
@@ -47,7 +56,13 @@ export type ChangePasswordReq = {
 export type ChangePasswordRes = {};
 
 export const useChangePassword = () => {
-  return useMutation<ChangePasswordRes, Error, ChangePasswordReq>((data) => {
-    return axios.post("http://localhost:8080/api/profile/changePassword", data);
-  });
+  return useMutation<ChangePasswordRes, Error, ChangePasswordReq>(
+    async (data) => {
+      const { data: changePasswordRes } = await axios.post(
+        "/user/profile/changePassword",
+        data
+      );
+      return changePasswordRes;
+    }
+  );
 };

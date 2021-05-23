@@ -9,8 +9,10 @@ import { BrowserRouter } from "react-router-dom";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { Provider } from "react-redux";
 import { store } from "./store/config";
+import { configureAxios } from "./api/configureAxios";
 
 const queryClient = new QueryClient();
+configureAxios();
 
 ReactDOM.render(
   <React.StrictMode>

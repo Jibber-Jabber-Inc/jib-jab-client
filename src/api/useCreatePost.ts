@@ -9,11 +9,7 @@ export type PostForm = {
 export const useCreatePost = () => {
   const queryClient = useQueryClient();
   return useMutation<PostData, Error, PostForm>(
-    (data) =>
-      axios.post<PostForm, PostData>(
-        "http://localhost:8080/api/post/create",
-        data
-      ),
+    (data) => axios.post<PostForm, PostData>("/post/posts/create", data),
     {
       onMutate: async (newPost) => {
         // Cancel any outgoing refetches (so they don't overwrite our optimistic update)

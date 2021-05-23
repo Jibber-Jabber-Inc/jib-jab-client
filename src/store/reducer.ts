@@ -1,5 +1,5 @@
-import { userReducer } from "./slices/user";
+import { sessionReducer } from "./slices/user";
 
 export const reducer = {
-  ...userReducer,
+  ...sessionReducer,
 };
