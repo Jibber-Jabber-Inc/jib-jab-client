@@ -58,8 +58,8 @@ export type ChangePasswordRes = {};
 export const useChangePassword = () => {
   return useMutation<ChangePasswordRes, Error, ChangePasswordReq>(
     async (data) => {
-      const { data: changePasswordRes } = await axios.post(
-        "/user/profile/changePassword",
+      const { data: changePasswordRes } = await axios.put(
+        "/user/users/editPassword",
         data
       );
       return changePasswordRes;

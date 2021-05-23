@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../config";
-import { User } from "../../entities/user";
+import { User } from "../../entities/entities";
 
 // Define a type for the slice state
 interface SessionState {

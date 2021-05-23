@@ -8,10 +8,10 @@ export type PostForm = {
 
 export const useCreatePost = () => {
   const queryClient = useQueryClient();
-  return useMutation<PostData, Error, PostForm>(
+  return useMutation<PostData, Error, PostForm, { rollback: () => void }>(
     (data) => axios.post<PostForm, PostData>("/post/posts/create", data),
     {
-      onMutate: async (newPost) => {
+      async onMutate(newPost) {
         // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
         await queryClient.cancelQueries("posts");
 
@@ -30,17 +30,16 @@ export const useCreatePost = () => {
           ]);
         }
 
-        return { previousPosts };
+        const rollback = () => queryClient.setQueryData("posts", previousPosts);
+        return { rollback };
       },
       // If the mutation fails, use the context returned from onMutate to roll back
-      onError: (error, variables, context: any) => {
-        if (context?.previousPosts) {
-          queryClient.setQueryData<PostData>("todos", context.previousPosts);
-        }
+      onError(_error, _variables, context) {
+        context?.rollback();
       },
       // Always refetch after error or success:
-      onSettled: () => {
-        queryClient.invalidateQueries("posts");
+      async onSettled() {
+        await queryClient.invalidateQueries("posts");
       },
     }
   );
