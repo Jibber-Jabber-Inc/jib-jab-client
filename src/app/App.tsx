@@ -13,6 +13,7 @@ import ProtectedRoute, {
   ProtectedRouteProps,
 } from "../components/protectedRoute/ProtectedRoute";
 import { Redirect } from "react-router";
+import { useLoggedUser } from "../api/auth";
 
 const useStyles = makeStyles({
   root: {
@@ -25,7 +26,10 @@ const App = () => {
   const session = useAppSelector(selectSession);
   const dispatch = useAppDispatch();
 
-  console.log({ session });
+  const { data: user, isLoading } = useLoggedUser();
+
+  if (isLoading) return <span>Loading...</span>;
+  if (user) dispatch(actions.session.setUser(user));
 
   const defaultProtectedRouteProps: ProtectedRouteProps = {
     isAuthenticated: session.isAuthenticated,

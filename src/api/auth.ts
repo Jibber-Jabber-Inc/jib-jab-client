@@ -1,5 +1,6 @@
-import { useMutation } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import axios, { AxiosResponse } from "axios";
+import { User } from "../entities/entities";
 
 export type SignUpReq = {
   username: string;
@@ -30,17 +31,11 @@ export type SignInReq = {
   password: string;
 };
 
-export type SignInRes = {
-  id: string;
-  email: string;
-  token: string;
-};
-
 export const useSignIn = () => {
-  return useMutation<SignInRes, Error, SignInReq>(async (data) => {
+  return useMutation<User, Error, SignInReq>(async (data) => {
     const { data: signInRes } = await axios.post<
       SignInReq,
-      AxiosResponse<SignInRes>
+      AxiosResponse<User>
     >("/user/auth/login", data);
     console.log(signInRes);
     return signInRes;
@@ -63,6 +58,24 @@ export const useChangePassword = () => {
         data
       );
       return changePasswordRes;
+    }
+  );
+};
+
+export const useLoggedUser = () => {
+  return useQuery<User, Error, User>(
+    "loggedUser",
+    async () => {
+      const { data } = await axios.get<User>("/user/users/loggedUser");
+      return data;
+    },
+    {
+      retry: false,
+      refetchInterval: false,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      // refetchOnReconnect: false,
+      retryOnMount: false,
     }
   );
 };

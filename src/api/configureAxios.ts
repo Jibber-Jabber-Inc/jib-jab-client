@@ -1,5 +1,5 @@
 import axios from "axios";
 
 export const configureAxios = () => {
-  axios.defaults.baseURL = "/api";
+  axios.defaults.baseURL = " /api";
 };

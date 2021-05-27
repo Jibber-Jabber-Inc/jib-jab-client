@@ -94,7 +94,7 @@ const Inside = ({ closeModal }: InsideProps) => {
     console.log(data);
     const { id } = user;
     try {
-      await mutateAsync({ id, ...data });
+      await mutateAsync({ id: id, ...data });
       closeModal();
     } catch (e) {}
   });

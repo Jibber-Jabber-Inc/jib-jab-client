@@ -1,7 +1,7 @@
 import { Button, TextField } from "@material-ui/core";
 import { ChangeEvent, FormEventHandler, useState } from "react";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import { useCreatePost } from "../../api/useCreatePost";
+import { useCreatePost } from "../../api/post";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

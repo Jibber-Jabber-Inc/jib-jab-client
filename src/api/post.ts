@@ -1,6 +1,6 @@
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import axios from "axios";
-import { PostData } from "./useFetchPosts";
+import { PostData } from "../entities/entities";
 
 export type PostForm = {
   content: string;
@@ -44,3 +44,9 @@ export const useCreatePost = () => {
     }
   );
 };
+
+export const usePosts = () =>
+  useQuery<PostData[], Error, PostData[]>("posts", async () => {
+    const { data } = await axios.get<PostData[]>("/post/posts");
+    return data;
+  });

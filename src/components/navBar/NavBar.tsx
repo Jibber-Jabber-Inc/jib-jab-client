@@ -110,6 +110,7 @@ export const NavBar = () => {
   const handleSignOut = () => {
     handleMenuClose();
     dispatch(actions.session.setUser(null));
+    history.push(urls.home);
   };
 
   const menuId = "primary-search-account-menu";

@@ -2,7 +2,7 @@ import React from "react";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { Post } from "../post/Post";
 import { List, ListItem } from "@material-ui/core";
-import { usePosts } from "../../api/useFetchPosts";
+import { usePosts } from "../../api/post";
 
 const useStyles = makeStyles(() =>
   createStyles({
