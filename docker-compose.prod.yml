@@ -6,6 +6,6 @@ services:
     container_name: jibjabclientprod
     build:
       context: .
-      dockerfile: Dockerfile.prod
+      dockerfile: Dockerfile
     ports:
       - '1337:80'
