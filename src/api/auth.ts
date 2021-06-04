@@ -32,13 +32,21 @@ export type SignInReq = {
 };
 
 export const useSignIn = () => {
-  return useMutation<User, Error, SignInReq>(async (data) => {
-    const { data: signInRes } = await axios.post<
-      SignInReq,
-      AxiosResponse<User>
-    >("/user/auth/login", data);
-    return signInRes;
-  });
+  const queryClient = useQueryClient();
+  return useMutation<User, Error, SignInReq>(
+    async (data) => {
+      const { data: signInRes } = await axios.post<
+        SignInReq,
+        AxiosResponse<User>
+      >("/user/auth/login", data);
+      return signInRes;
+    },
+    {
+      onSuccess() {
+        queryClient.invalidateQueries("loggedUser");
+      },
+    }
+  );
 };
 
 export type ChangePasswordReq = {
@@ -49,6 +57,7 @@ export type ChangePasswordReq = {
 export type ChangePasswordRes = {};
 
 export const useChangePassword = () => {
+  const queryClient = useQueryClient();
   return useMutation<ChangePasswordRes, Error, ChangePasswordReq>(
     async (data) => {
       const { data: changePasswordRes } = await axios.put(
@@ -56,6 +65,11 @@ export const useChangePassword = () => {
         data
       );
       return changePasswordRes;
+    },
+    {
+      async onSettled() {
+        await queryClient.invalidateQueries("loggedUser");
+      },
     }
   );
 };
@@ -70,10 +84,18 @@ export type EditProfileReq = {
 export type EditProfileRes = User;
 
 export const useEditProfile = () => {
-  return useMutation<EditProfileRes, Error, EditProfileReq>(async (req) => {
-    const { data } = await axios.put("/user/users/editProfile", req);
-    return data;
-  });
+  const queryClient = useQueryClient();
+  return useMutation<EditProfileRes, Error, EditProfileReq>(
+    async (req) => {
+      const { data } = await axios.put("/user/users/editProfile", req);
+      return data;
+    },
+    {
+      async onSettled() {
+        await queryClient.invalidateQueries("loggedUser");
+      },
+    }
+  );
 };
 
 export const useLoggedUser = () => {
@@ -85,11 +107,6 @@ export const useLoggedUser = () => {
     },
     {
       retry: false,
-      refetchInterval: false,
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      // refetchOnReconnect: false,
-      retryOnMount: false,
     }
   );
 };
@@ -98,38 +115,11 @@ export const useLogOut = () => {
   const queryClient = useQueryClient();
   return useMutation(
     async () => {
-      return axios.post("/users/auth/logout");
+      return axios.post("/user/auth/logout");
     },
     {
-      onSettled() {
-        queryClient.removeQueries("loggedUser");
-      },
-    }
-  );
-};
-
-export const useLogOut = () => {
-  const queryClient = useQueryClient();
-  return useMutation(
-    async () => {
-      return axios.post("/users/auth/logout");
-    },
-    {
-      onSettled() {
-        queryClient.removeQueries("loggedUser");
-      },
-    }
-  );
-};
-
-export const useLogOut = () => {
-  const queryClient = useQueryClient();
-  return useMutation(
-    async () => {
-      return axios.post("/users/auth/logout");
-    },
-    {
-      onSettled() {
+      async onSettled() {
+        await queryClient.cancelQueries("loggedUser");
         queryClient.removeQueries("loggedUser");
       },
     }

@@ -5,6 +5,11 @@ export const urls = {
   viewProfile: "/profile",
   home: "/",
   notFound: "/notfound",
+  user: {
+    path: `/user/:id`,
+    byId: (id: string) => `/user/${id}`,
+  },
+  searchUsers: "/searchUser",
 };
 
 export const errorMessages = {

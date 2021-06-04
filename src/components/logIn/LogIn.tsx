@@ -13,7 +13,7 @@ import * as yup from "yup";
 import { errorMessages, urls } from "../../constants";
 import { Link, useHistory } from "react-router-dom";
 import { useSignIn } from "../../api/auth";
-import { actions, useAppDispatch, useAppSelector } from "../../store";
+import { useAppSelector } from "../../store";
 import { ErrorAlert } from "../ErrorAlert";
 import { FormField } from "../forms/FormField";
 import { selectRedirectPath } from "../../store/slices/user";
@@ -61,7 +61,6 @@ type SignInFormData = yup.InferType<typeof schema>;
 export const LogIn = () => {
   const classes = useStyles();
   const history = useHistory();
-  const dispatch = useAppDispatch();
   const redirectPath = useAppSelector(selectRedirectPath);
 
   const { mutateAsync, isLoading, isError } = useSignIn();
@@ -73,8 +72,7 @@ export const LogIn = () => {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      const signInRes = await mutateAsync(data);
-      dispatch(actions.session.setUser(signInRes));
+      await mutateAsync(data);
       history.push(redirectPath);
     } catch (e) {}
   });

@@ -6,9 +6,7 @@ import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import TextField from "@material-ui/core/TextField";
 import { errorMessages } from "../../constants";
-import { useAppSelector } from "../../store";
-import { useChangePassword } from "../../api/auth";
-import { selectUser } from "../../store/slices/user";
+import { useChangePassword, useLoggedUser } from "../../api/auth";
 import { ErrorAlert } from "../ErrorAlert";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -78,9 +76,7 @@ type ChangePasswordFormData = yup.InferType<typeof schema>;
 
 const Inside = ({ closeModal }: InsideProps) => {
   const classes = useStyles();
-
-  const user = useAppSelector(selectUser);
-
+  const { data: user } = useLoggedUser();
   const { control, handleSubmit } = useForm<ChangePasswordFormData>({
     resolver: yupResolver(schema),
     mode: "onBlur",
@@ -91,7 +87,6 @@ const Inside = ({ closeModal }: InsideProps) => {
   if (!user) return null;
 
   const onSubmit = handleSubmit(async (data) => {
-    const { id } = user;
     try {
       await mutateAsync(data);
       closeModal();

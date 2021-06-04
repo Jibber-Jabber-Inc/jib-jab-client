@@ -12,6 +12,9 @@ import ProtectedRoute, {
   ProtectedRouteProps,
 } from "../components/protectedRoute/ProtectedRoute";
 import { useLoggedUser } from "../api/auth";
+import { UserProfile } from "../components/userProfile/UserProfile";
+import { useUsers } from "../api/users";
+import { LoggedIn } from "../components/LoggedIn";
 
 const App = () => {
   const session = useAppSelector(selectSession);
@@ -20,34 +23,27 @@ const App = () => {
   const { data: user, isLoading } = useLoggedUser();
 
   if (isLoading) return <span>Loading...</span>;
-  if (user) dispatch(actions.session.setUser(user));
 
   const defaultProtectedRouteProps: ProtectedRouteProps = {
-    isAuthenticated: session.isAuthenticated,
+    isAuthenticated: user != null,
     authenticationPath: urls.logIn,
     redirectPath: session.redirectPath,
     setRedirectPath: (path) => dispatch(actions.session.setRedirectPath(path)),
   };
 
+  console.log(user);
+
   return (
     <div className="App">
-      {session.isAuthenticated && <NavBar />}
       <Switch>
         <Route exact path={urls.signUp} component={SignUp} />
         <Route exact path={urls.logIn} component={LogIn} />
-        <ProtectedRoute
-          {...defaultProtectedRouteProps}
-          exact
-          path={urls.viewProfile}
-          component={Profile}
-        />
-        <ProtectedRoute
-          {...defaultProtectedRouteProps}
-          exact
-          path={urls.home}
-          component={Home}
-        />
         <Route exact path={urls.notFound} component={NotExists} />
+        <ProtectedRoute
+          {...defaultProtectedRouteProps}
+          path={urls.home}
+          component={LoggedIn}
+        />
         <Route component={NotExists} />
       </Switch>
     </div>

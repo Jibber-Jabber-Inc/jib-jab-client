@@ -9,14 +9,11 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
-import InputBase from "@material-ui/core/InputBase";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
-import SearchIcon from "@material-ui/icons/Search";
 import AccountCircle from "@material-ui/icons/AccountCircle";
-import { useHistory, Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { urls } from "../../constants";
-import { actions, useAppDispatch } from "../../store";
 import { useLogOut } from "../../api/auth";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -77,7 +74,6 @@ const useStyles = makeStyles((theme: Theme) =>
 export const NavBar = () => {
   const classes = useStyles();
   const history = useHistory();
-  const dispatch = useAppDispatch();
 
   const { mutateAsync } = useLogOut();
 
@@ -101,8 +97,7 @@ export const NavBar = () => {
   const handleSignOut = async () => {
     handleMenuClose();
     await mutateAsync();
-    dispatch(actions.session.setUser(null));
-    history.push(urls.home);
+    history.push(urls.logIn);
   };
 
   const menuId = "primary-search-account-menu";
@@ -136,19 +131,17 @@ export const NavBar = () => {
               jibber jabber
             </Typography>
           </Link>
-          <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon />
-            </div>
-            <InputBase
-              placeholder="Search…"
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput,
-              }}
-              inputProps={{ "aria-label": "search" }}
-            />
-          </div>
+          <Link
+            to={urls.searchUsers}
+            style={{
+              color: "white",
+              textDecoration: "none",
+            }}
+          >
+            <Typography variant="h5" noWrap>
+              Search users
+            </Typography>
+          </Link>
           <div className={classes.grow} />
           <div>
             <IconButton

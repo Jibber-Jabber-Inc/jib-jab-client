@@ -1,9 +1,8 @@
 import { Avatar, Container, Grid, Typography } from "@material-ui/core";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import { useAppSelector } from "../../store";
-import { selectUser } from "../../store/slices/user";
 import { ChangePassword } from "../editProfile/ChangePassword";
 import { EditProfile } from "../editProfile/EditProfile";
+import { useLoggedUser } from "../../api/auth";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -54,7 +53,8 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export const Profile = () => {
   const classes = useStyles();
-  const user = useAppSelector(selectUser);
+
+  const { data: user } = useLoggedUser();
 
   const { email, username, firstName, lastName } = user!;
 
