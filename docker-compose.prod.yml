@@ -1,0 +1,11 @@
+version: '3.7'
+
+services:
+
+  jib_jab_client_prod:
+    container_name: jibjabclientprod
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '1337:80'
