@@ -3,7 +3,6 @@ import { Route, Switch } from "react-router-dom";
 import { Home } from "../components/main/Home";
 import { NotExists } from "../components/notExists/NotExists";
 import { SignUp } from "../components/signUp/SignUp";
-import { makeStyles } from "@material-ui/core/styles";
 import { urls } from "../constants";
 import { LogIn } from "../components/logIn/LogIn";
 import { Profile } from "../components/profile/Profile";
@@ -12,17 +11,9 @@ import { selectSession } from "../store/slices/user";
 import ProtectedRoute, {
   ProtectedRouteProps,
 } from "../components/protectedRoute/ProtectedRoute";
-import { Redirect } from "react-router";
 import { useLoggedUser } from "../api/auth";
 
-const useStyles = makeStyles({
-  root: {
-    marginTop: 70,
-  },
-});
-
 const App = () => {
-  const classes = useStyles();
   const session = useAppSelector(selectSession);
   const dispatch = useAppDispatch();
 
@@ -40,30 +31,24 @@ const App = () => {
 
   return (
     <div className="App">
+      {session.isAuthenticated && <NavBar />}
       <Switch>
-        <Route exact path={urls.notFound} component={NotExists} />
         <Route exact path={urls.signUp} component={SignUp} />
         <Route exact path={urls.logIn} component={LogIn} />
-        <div>
-          <NavBar />
-          <div className={classes.root}>
-            <ProtectedRoute
-              {...defaultProtectedRouteProps}
-              exact
-              path={urls.viewProfile}
-              component={Profile}
-            />
-            <ProtectedRoute
-              {...defaultProtectedRouteProps}
-              exact
-              path={urls.home}
-              component={Home}
-            />
-          </div>
-        </div>
-
-        {/*not working*/}
-        <Redirect to={urls.notFound} />
+        <ProtectedRoute
+          {...defaultProtectedRouteProps}
+          exact
+          path={urls.viewProfile}
+          component={Profile}
+        />
+        <ProtectedRoute
+          {...defaultProtectedRouteProps}
+          exact
+          path={urls.home}
+          component={Home}
+        />
+        <Route exact path={urls.notFound} component={NotExists} />
+        <Route component={NotExists} />
       </Switch>
     </div>
   );

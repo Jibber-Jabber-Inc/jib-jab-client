@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import axios, { AxiosResponse } from "axios";
 import { User } from "../entities/entities";
 
@@ -37,13 +37,11 @@ export const useSignIn = () => {
       SignInReq,
       AxiosResponse<User>
     >("/user/auth/login", data);
-    console.log(signInRes);
     return signInRes;
   });
 };
 
 export type ChangePasswordReq = {
-  id: string;
   oldPassword: string;
   newPassword: string;
 };
@@ -62,6 +60,22 @@ export const useChangePassword = () => {
   );
 };
 
+export type EditProfileReq = {
+  password: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+};
+
+export type EditProfileRes = User;
+
+export const useEditProfile = () => {
+  return useMutation<EditProfileRes, Error, EditProfileReq>(async (req) => {
+    const { data } = await axios.put("/user/users/editProfile", req);
+    return data;
+  });
+};
+
 export const useLoggedUser = () => {
   return useQuery<User, Error, User>(
     "loggedUser",
@@ -76,6 +90,48 @@ export const useLoggedUser = () => {
       refetchOnWindowFocus: false,
       // refetchOnReconnect: false,
       retryOnMount: false,
+    }
+  );
+};
+
+export const useLogOut = () => {
+  const queryClient = useQueryClient();
+  return useMutation(
+    async () => {
+      return axios.post("/users/auth/logout");
+    },
+    {
+      onSettled() {
+        queryClient.removeQueries("loggedUser");
+      },
+    }
+  );
+};
+
+export const useLogOut = () => {
+  const queryClient = useQueryClient();
+  return useMutation(
+    async () => {
+      return axios.post("/users/auth/logout");
+    },
+    {
+      onSettled() {
+        queryClient.removeQueries("loggedUser");
+      },
+    }
+  );
+};
+
+export const useLogOut = () => {
+  const queryClient = useQueryClient();
+  return useMutation(
+    async () => {
+      return axios.post("/users/auth/logout");
+    },
+    {
+      onSettled() {
+        queryClient.removeQueries("loggedUser");
+      },
     }
   );
 };

@@ -3,6 +3,7 @@ import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import { useAppSelector } from "../../store";
 import { selectUser } from "../../store/slices/user";
 import { ChangePassword } from "../editProfile/ChangePassword";
+import { EditProfile } from "../editProfile/EditProfile";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -25,8 +26,9 @@ const useStyles = makeStyles((theme: Theme) =>
       flexDirection: "column",
       justifyContent: "center",
       width: "100%",
+      gap: 3,
     },
-    email: {
+    field: {
       display: "flex",
       flexDirection: "row",
       justifyContent: "center",
@@ -45,25 +47,25 @@ const useStyles = makeStyles((theme: Theme) =>
       width: "100%",
       fontsize: "2em",
       marginTop: "3em",
+      gap: "2em",
     },
   })
 );
 
 export const Profile = () => {
   const classes = useStyles();
-
   const user = useAppSelector(selectUser);
 
-  const { email } = user!;
+  const { email, username, firstName, lastName } = user!;
 
   return (
     <Container>
-      <Grid container xs={12}>
+      <Grid container>
         <div className={classes.iconContainer}>
           <Avatar className={classes.large} />
         </div>
         <div className={classes.data}>
-          <div className={classes.email}>
+          <div className={classes.field}>
             <div>
               <Typography variant={"h4"}>Email: </Typography>
             </div>
@@ -71,7 +73,34 @@ export const Profile = () => {
               <Typography variant={"h5"}>{email}</Typography>
             </div>
           </div>
+          <div className={classes.field}>
+            <div>
+              <Typography variant={"h4"}>Username: </Typography>
+            </div>
+            <div>
+              <Typography variant={"h5"}>{username}</Typography>
+            </div>
+          </div>
+          <div className={classes.field}>
+            <div>
+              <Typography variant={"h4"}>First name: </Typography>
+            </div>
+            <div>
+              <Typography variant={"h5"}>{firstName}</Typography>
+            </div>
+          </div>
+          <div className={classes.field}>
+            <div>
+              <Typography variant={"h4"}>Last name: </Typography>
+            </div>
+            <div>
+              <Typography variant={"h5"}>{lastName}</Typography>
+            </div>
+          </div>
           <div className={classes.buttonContainer}>
+            <div>
+              <EditProfile />
+            </div>
             <div>
               <ChangePassword />
             </div>

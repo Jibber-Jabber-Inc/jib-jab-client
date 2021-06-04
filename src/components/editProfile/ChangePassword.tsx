@@ -1,6 +1,6 @@
 import { Button, Modal, Typography } from "@material-ui/core";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import React, { useState } from "react";
+import { useState } from "react";
 import * as yup from "yup";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -91,10 +91,9 @@ const Inside = ({ closeModal }: InsideProps) => {
   if (!user) return null;
 
   const onSubmit = handleSubmit(async (data) => {
-    console.log(data);
     const { id } = user;
     try {
-      await mutateAsync({ id: id, ...data });
+      await mutateAsync(data);
       closeModal();
     } catch (e) {}
   });

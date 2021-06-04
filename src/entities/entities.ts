@@ -10,5 +10,6 @@ export interface User {
 export type PostData = {
   id: number;
   content: string;
-  creationDate: Date;
+  creationDate: string;
+  userInfoDto: User;
 };

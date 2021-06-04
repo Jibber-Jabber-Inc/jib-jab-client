@@ -17,6 +17,7 @@ import AccountCircle from "@material-ui/icons/AccountCircle";
 import { useHistory, Link } from "react-router-dom";
 import { urls } from "../../constants";
 import { actions, useAppDispatch } from "../../store";
+import { useLogOut } from "../../api/auth";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -70,18 +71,6 @@ const useStyles = makeStyles((theme: Theme) =>
         width: "20ch",
       },
     },
-    sectionDesktop: {
-      display: "none",
-      [theme.breakpoints.up("md")]: {
-        display: "flex",
-      },
-    },
-    sectionMobile: {
-      display: "flex",
-      [theme.breakpoints.up("md")]: {
-        display: "none",
-      },
-    },
   })
 );
 
@@ -89,6 +78,8 @@ export const NavBar = () => {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useAppDispatch();
+
+  const { mutateAsync } = useLogOut();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -107,8 +98,9 @@ export const NavBar = () => {
     history.push(urls.viewProfile);
   };
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     handleMenuClose();
+    await mutateAsync();
     dispatch(actions.session.setUser(null));
     history.push(urls.home);
   };
@@ -158,7 +150,7 @@ export const NavBar = () => {
             />
           </div>
           <div className={classes.grow} />
-          <div className={classes.sectionDesktop}>
+          <div>
             <IconButton
               edge="end"
               aria-label="account of current user"

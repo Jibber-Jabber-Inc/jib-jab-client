@@ -26,9 +26,9 @@ export const PostList = () => {
   return (
     <div className={classes.root}>
       <List className={classes.list}>
-        {posts.map(({ id, content }) => (
-          <ListItem key={id}>
-            <Post description={content} />
+        {posts.map((post) => (
+          <ListItem key={post.id}>
+            <Post post={post} />
           </ListItem>
         ))}
       </List>

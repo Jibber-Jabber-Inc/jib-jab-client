@@ -9,5 +9,5 @@ export const urls = {
 
 export const errorMessages = {
   required: "This field is required",
-  email: "The email is not valid",
+  field: "The email is not valid",
 };
