@@ -8,7 +8,7 @@ import { urls } from "../constants";
 import { LogIn } from "../components/logIn/LogIn";
 import { Profile } from "../components/profile/Profile";
 import { actions, useAppDispatch, useAppSelector } from "../store";
-import { selectSession } from "../store/slices/user";
+import { selectSession } from "../store/slices/session";
 import ProtectedRoute, {
   ProtectedRouteProps,
 } from "../components/protectedRoute/ProtectedRoute";
