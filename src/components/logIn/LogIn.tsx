@@ -16,7 +16,7 @@ import { useSignIn } from "../../api/auth";
 import { actions, useAppDispatch, useAppSelector } from "../../store";
 import { ErrorAlert } from "../ErrorAlert";
 import { FormField } from "../forms/FormField";
-import { selectRedirectPath } from "../../store/slices/user";
+import { selectRedirectPath } from "../../store/slices/session";
 
 const useStyles = makeStyles((theme) => ({
   root: {

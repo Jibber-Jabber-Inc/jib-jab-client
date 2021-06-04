@@ -8,7 +8,7 @@ import TextField from "@material-ui/core/TextField";
 import { errorMessages } from "../../constants";
 import { useAppSelector } from "../../store";
 import { useChangePassword } from "../../api/auth";
-import { selectUser } from "../../store/slices/user";
+import { selectUser } from "../../store/slices/session";
 import { ErrorAlert } from "../ErrorAlert";
 
 const useStyles = makeStyles((theme: Theme) =>

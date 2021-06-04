@@ -1,7 +1,7 @@
 import { Avatar, Container, Grid, Typography } from "@material-ui/core";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import { useAppSelector } from "../../store";
-import { selectUser } from "../../store/slices/user";
+import { selectUser } from "../../store/slices/session";
 import { ChangePassword } from "../editProfile/ChangePassword";
 
 const useStyles = makeStyles((theme: Theme) =>
