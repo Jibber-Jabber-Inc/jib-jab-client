@@ -1,8 +1,8 @@
 import { Avatar, Container, Grid, Typography } from "@material-ui/core";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import { ChangePassword } from "../editProfile/ChangePassword";
-import { EditProfile } from "../editProfile/EditProfile";
-import { useLoggedUser } from "../../api/auth";
+import { ChangePassword } from "./ChangePassword";
+import { EditProfile } from "./EditProfile";
+import { useLoggedUser } from "../api/auth";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

@@ -13,8 +13,8 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import { Link, useHistory } from "react-router-dom";
-import { urls } from "../../constants";
-import { useLogOut } from "../../api/auth";
+import { urls } from "../constants";
+import { useLogOut } from "../api/auth";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

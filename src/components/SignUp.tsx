@@ -9,11 +9,11 @@ import Container from "@material-ui/core/Container";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { errorMessages, urls } from "../../constants";
+import { errorMessages, urls } from "../constants";
 import { Link, useHistory } from "react-router-dom";
-import { useSignUp } from "../../api/auth";
-import { FormField } from "../forms/FormField";
-import { ErrorAlert } from "../ErrorAlert";
+import { useSignUp } from "../api/auth";
+import { FormField } from "./FormField";
+import { ErrorAlert } from "./ErrorAlert";
 import React from "react";
 
 const useStyles = makeStyles((theme) => ({

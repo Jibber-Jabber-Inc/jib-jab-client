@@ -10,13 +10,13 @@ import { makeStyles } from "@material-ui/core/styles";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { errorMessages, urls } from "../../constants";
+import { errorMessages, urls } from "../constants";
 import { Link, useHistory } from "react-router-dom";
-import { useSignIn } from "../../api/auth";
-import { useAppSelector } from "../../store";
-import { ErrorAlert } from "../ErrorAlert";
-import { FormField } from "../forms/FormField";
-import { selectRedirectPath } from "../../store/slices/user";
+import { useSignIn } from "../api/auth";
+import { useAppSelector } from "../store";
+import { ErrorAlert } from "./ErrorAlert";
+import { FormField } from "./FormField";
+import { selectRedirectPath } from "../store/slices/user";
 
 const useStyles = makeStyles((theme) => ({
   root: {

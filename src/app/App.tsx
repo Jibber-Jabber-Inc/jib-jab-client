@@ -1,19 +1,14 @@
-import { NavBar } from "../components/navBar/NavBar";
 import { Route, Switch } from "react-router-dom";
-import { Home } from "../components/main/Home";
-import { NotExists } from "../components/notExists/NotExists";
-import { SignUp } from "../components/signUp/SignUp";
+import { NotExists } from "../components/NotExists";
+import { SignUp } from "../components/SignUp";
 import { urls } from "../constants";
-import { LogIn } from "../components/logIn/LogIn";
-import { Profile } from "../components/profile/Profile";
+import { LogIn } from "../components/LogIn";
 import { actions, useAppDispatch, useAppSelector } from "../store";
 import { selectSession } from "../store/slices/user";
 import ProtectedRoute, {
   ProtectedRouteProps,
-} from "../components/protectedRoute/ProtectedRoute";
+} from "../components/ProtectedRoute";
 import { useLoggedUser } from "../api/auth";
-import { UserProfile } from "../components/userProfile/UserProfile";
-import { useUsers } from "../api/users";
 import { LoggedIn } from "../components/LoggedIn";
 
 const App = () => {

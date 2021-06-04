@@ -16,55 +16,25 @@ export type PostCreationRes = {
 
 export const useCreatePost = () => {
   const queryClient = useQueryClient();
-  const { data } = useLoggedUser();
-  const user = data!;
-  return useMutation<
-    PostCreationRes,
-    Error,
-    PostForm,
-    { rollback: () => void }
-  >((data) => axios.post("/post/posts/create", data), {
-    async onMutate(newPost) {
-      // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-      await queryClient.cancelQueries("posts");
-
-      // Snapshot the previous value
-      const previousPosts = queryClient.getQueryData<PostData[]>("posts");
-
-      // Optimistically update to the new value
-      if (previousPosts) {
-        queryClient.setQueryData<PostData[]>("posts", [
-          ...previousPosts,
-          {
-            id: Math.random().toString(),
-            content: newPost.content,
-            creationDate: new Date().toString(),
-            userInfoDto: user,
-            isLiked: false,
-            amountLikes: 0,
-          },
-        ]);
-      }
-
-      if (!previousPosts) queryClient.setQueryData("posts", []);
-
-      const rollback = () => queryClient.setQueryData("posts", previousPosts);
-      return { rollback };
-    },
-    // If the mutation fails, use the context returned from onMutate to roll back
-    onError(_error, _variables, context) {
-      // context?.rollback();
-    },
-    // Always refetch after error or success:
-    async onSettled() {
-      await queryClient.invalidateQueries("posts");
-    },
-  });
+  return useMutation<PostCreationRes, Error, PostForm>(
+    (data) => axios.post("/post/posts/create", data),
+    {
+      async onSuccess() {
+        await queryClient.invalidateQueries("posts");
+      },
+    }
+  );
 };
 
 export const usePosts = () =>
   useQuery<PostData[], Error>("posts", async () => {
     const { data } = await axios.get<PostData[]>("/post/posts");
+    return data;
+  });
+
+export const usePostsByUserId = (id: string) =>
+  useQuery<PostData[], Error>(["posts", id], async () => {
+    const { data } = await axios.get<PostData[]>(`/post/posts/user/${id}`);
     return data;
   });
 

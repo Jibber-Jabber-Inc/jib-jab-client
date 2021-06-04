@@ -1,10 +1,10 @@
 import { urls } from "../constants";
-import { Profile } from "./profile/Profile";
-import { Home } from "./main/Home";
-import { UserProfile } from "./userProfile/UserProfile";
+import { Profile } from "./Profile";
+import { Home } from "./Home";
+import { UserProfile } from "./UserProfile";
 import { Route, Switch } from "react-router-dom";
-import { NotExists } from "./notExists/NotExists";
-import { NavBar } from "./navBar/NavBar";
+import { NotExists } from "./NotExists";
+import { NavBar } from "./NavBar";
 import { UserSearch } from "./UserSearch";
 
 export const LoggedIn = () => {

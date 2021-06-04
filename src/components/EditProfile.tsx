@@ -5,9 +5,9 @@ import * as yup from "yup";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import TextField from "@material-ui/core/TextField";
-import { errorMessages } from "../../constants";
-import { useChangePassword, useLoggedUser } from "../../api/auth";
-import { ErrorAlert } from "../ErrorAlert";
+import { errorMessages } from "../constants";
+import { useEditProfile, useLoggedUser } from "../api/auth";
+import { ErrorAlert } from "./ErrorAlert";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme: Theme) =>
       position: "absolute",
       top: `50%`,
       left: `50%`,
-      transform: `translate(-50%, -70%)`,
+      transform: `translate(-50%, -50%)`,
     },
     inputs: {
       marginTop: "30px",
@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
-export const ChangePassword = () => {
+export const EditProfile = () => {
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => {
@@ -53,7 +53,7 @@ export const ChangePassword = () => {
         color={"primary"}
         onClick={handleOpen}
       >
-        Change password
+        Edit profile
       </Button>
       <Modal
         open={open}
@@ -67,28 +67,38 @@ export const ChangePassword = () => {
   );
 };
 
+const getDefault = (field: string | undefined, defaultValue: string) =>
+  field == null || field === "" ? defaultValue : field;
+
 const schema = yup.object({
-  oldPassword: yup.string().required(errorMessages.required),
-  newPassword: yup.string().required(errorMessages.required),
+  password: yup.string().required(errorMessages.required),
+  email: yup.string(),
+  firstName: yup.string(),
+  lastName: yup.string(),
 });
 
-type ChangePasswordFormData = yup.InferType<typeof schema>;
+type EditProfileFormData = yup.InferType<typeof schema>;
 
 const Inside = ({ closeModal }: InsideProps) => {
   const classes = useStyles();
   const { data: user } = useLoggedUser();
-  const { control, handleSubmit } = useForm<ChangePasswordFormData>({
+
+  const { control, handleSubmit } = useForm<EditProfileFormData>({
     resolver: yupResolver(schema),
     mode: "onBlur",
   });
 
-  const { mutateAsync, isLoading, isError } = useChangePassword();
+  const { mutateAsync, isLoading, isError } = useEditProfile();
 
-  if (!user) return null;
-
-  const onSubmit = handleSubmit(async (data) => {
+  const onSubmit = handleSubmit(async (form) => {
+    const { email, lastName, firstName } = user!;
     try {
-      await mutateAsync(data);
+      await mutateAsync({
+        password: form.password,
+        email: getDefault(form.email, email),
+        firstName: getDefault(form.firstName, firstName),
+        lastName: getDefault(form.lastName, lastName),
+      });
       closeModal();
     } catch (e) {}
   });
@@ -101,7 +111,55 @@ const Inside = ({ closeModal }: InsideProps) => {
           <form onSubmit={onSubmit}>
             <div className={classes.inputs}>
               <Controller
-                name={"oldPassword"}
+                name={"email"}
+                control={control}
+                render={({ field, fieldState: { invalid, error } }) => (
+                  <TextField
+                    variant="outlined"
+                    margin={"normal"}
+                    type="email"
+                    fullWidth
+                    label="Email"
+                    error={invalid}
+                    helperText={error?.message}
+                    {...field}
+                  />
+                )}
+              />
+              <Controller
+                name={"firstName"}
+                control={control}
+                render={({ field, fieldState: { invalid, error } }) => (
+                  <TextField
+                    variant="outlined"
+                    margin={"normal"}
+                    type="text"
+                    fullWidth
+                    label="First name"
+                    error={invalid}
+                    helperText={error?.message}
+                    {...field}
+                  />
+                )}
+              />
+              <Controller
+                name={"lastName"}
+                control={control}
+                render={({ field, fieldState: { invalid, error } }) => (
+                  <TextField
+                    variant="outlined"
+                    margin={"normal"}
+                    type="text"
+                    fullWidth
+                    label="Last name"
+                    error={invalid}
+                    helperText={error?.message}
+                    {...field}
+                  />
+                )}
+              />
+              <Controller
+                name={"password"}
                 control={control}
                 render={({ field, fieldState: { invalid, error } }) => (
                   <TextField
@@ -110,23 +168,6 @@ const Inside = ({ closeModal }: InsideProps) => {
                     type="password"
                     fullWidth
                     label="Current password"
-                    autoComplete="current-password"
-                    error={invalid}
-                    helperText={error?.message}
-                    {...field}
-                  />
-                )}
-              />
-              <Controller
-                name={"newPassword"}
-                control={control}
-                render={({ field, fieldState: { invalid, error } }) => (
-                  <TextField
-                    variant="outlined"
-                    margin={"normal"}
-                    type="password"
-                    fullWidth
-                    label="New password"
                     autoComplete="current-password"
                     error={invalid}
                     helperText={error?.message}

@@ -1,6 +1,6 @@
 import { Container } from "@material-ui/core";
-import { CreatePost } from "../createPost/CreatePost";
-import { PostList } from "../postList/PostList";
+import { CreatePost } from "./CreatePost";
+import { PostList } from "./PostList";
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles({
