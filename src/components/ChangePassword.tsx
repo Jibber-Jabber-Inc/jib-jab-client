@@ -143,7 +143,7 @@ const Inside = ({ closeModal }: InsideProps) => {
                   className={classes.submit}
                   disabled={isLoading}
                 >
-                  {isLoading ? "Loading..." : "Sign In"}
+                  {isLoading ? "Loading..." : "Confirm"}
                 </Button>
               </div>
             </div>

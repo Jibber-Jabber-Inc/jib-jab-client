@@ -86,6 +86,9 @@ const Inside = ({ closeModal }: InsideProps) => {
   const { control, handleSubmit } = useForm<EditProfileFormData>({
     resolver: yupResolver(schema),
     mode: "onBlur",
+    defaultValues: {
+      ...user,
+    },
   });
 
   const { mutateAsync, isLoading, isError } = useEditProfile();
@@ -107,7 +110,7 @@ const Inside = ({ closeModal }: InsideProps) => {
     <div>
       <div className={classes.center}>
         <div className={classes.paper}>
-          <Typography variant={"h4"}>Change password</Typography>
+          <Typography variant={"h4"}>Edit profile</Typography>
           <form onSubmit={onSubmit}>
             <div className={classes.inputs}>
               <Controller
@@ -184,7 +187,7 @@ const Inside = ({ closeModal }: InsideProps) => {
                   className={classes.submit}
                   disabled={isLoading}
                 >
-                  {isLoading ? "Loading..." : "Sign In"}
+                  {isLoading ? "Loading..." : "Confirm"}
                 </Button>
               </div>
             </div>

@@ -68,11 +68,17 @@ export const LogIn = () => {
   const { control, handleSubmit } = useForm<SignInFormData>({
     resolver: yupResolver(schema),
     mode: "onBlur",
+    defaultValues: {
+      username: "",
+      password: "",
+    },
   });
 
   const onSubmit = handleSubmit(async (data) => {
     try {
+      console.log("before mutate");
       await mutateAsync(data);
+      console.log("after mutate");
       history.push(redirectPath);
     } catch (e) {}
   });
@@ -107,10 +113,6 @@ export const LogIn = () => {
                 />
               </Grid>
             </Grid>
-            {/*<FormControlLabel*/}
-            {/*  control={<Checkbox value="remember" color="primary" />}*/}
-            {/*  label="Remember me"*/}
-            {/*/>*/}
             <div>
               <Button
                 type="submit"
@@ -124,14 +126,10 @@ export const LogIn = () => {
               </Button>
             </div>
             <Grid container>
-              <Grid item xs>
-                {/*<MLink href="#" variant="body2">*/}
-                {/*  Forgot password?*/}
-                {/*</MLink>*/}
-              </Grid>
+              <Grid item xs />
               <Grid item>
                 <Link to={urls.signUp}>
-                  <MLink variant="body2">
+                  <MLink variant="body2" component={"span"}>
                     {"Don't have an account? Sign Up"}
                   </MLink>
                 </Link>

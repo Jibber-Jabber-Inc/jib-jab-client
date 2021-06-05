@@ -10,7 +10,9 @@ import { useDeletePost, useDislikePost, useLikePost } from "../api/post";
 import { useLoggedUser } from "../api/auth";
 
 const useStyles = makeStyles({
-  root: {},
+  root: {
+    width: 300,
+  },
 });
 
 type PostProps = {

@@ -8,6 +8,7 @@ import { NavBar } from "./NavBar";
 import { UserSearch } from "./UserSearch";
 
 export const LoggedIn = () => {
+  console.log("logged in");
   return (
     <div>
       <NavBar />

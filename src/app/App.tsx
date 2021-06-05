@@ -15,7 +15,9 @@ const App = () => {
   const session = useAppSelector(selectSession);
   const dispatch = useAppDispatch();
 
+  console.log("use logged user app");
   const { data: user, isLoading } = useLoggedUser();
+  console.log({ isLoading });
 
   if (isLoading) return <span>Loading...</span>;
 
@@ -25,8 +27,6 @@ const App = () => {
     redirectPath: session.redirectPath,
     setRedirectPath: (path) => dispatch(actions.session.setRedirectPath(path)),
   };
-
-  console.log(user);
 
   return (
     <div className="App">

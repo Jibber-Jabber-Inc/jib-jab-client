@@ -42,8 +42,10 @@ export const useSignIn = () => {
       return signInRes;
     },
     {
-      onSuccess() {
-        queryClient.invalidateQueries("loggedUser");
+      async onSuccess() {
+        console.log("before success");
+        await queryClient.invalidateQueries("loggedUser");
+        console.log("after success");
       },
     }
   );

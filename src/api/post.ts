@@ -43,7 +43,8 @@ export const useLikePost = () => {
   return useMutation(
     async (id: string) => axios.post(`/post/posts/like/${id}`),
     {
-      async onSuccess() {
+      async onSuccess(_, id) {
+        await queryClient.invalidateQueries(["posts", id]);
         await queryClient.invalidateQueries("posts");
       },
     }
@@ -56,7 +57,8 @@ export const useDislikePost = () => {
   return useMutation(
     async (id: string) => axios.post(`/post/posts/dislike/${id}`),
     {
-      async onSuccess() {
+      async onSuccess(_, id) {
+        await queryClient.invalidateQueries(["posts", id]);
         await queryClient.invalidateQueries("posts");
       },
     }
@@ -64,11 +66,12 @@ export const useDislikePost = () => {
 };
 
 export const useDeletePost = () => {
+  const { data: { id } = {} } = useLoggedUser();
   const queryClient = useQueryClient();
 
-  return useMutation(async (id: string) => axios.post(`/post/posts/${id}`), {
+  return useMutation(async (id: string) => axios.delete(`/post/posts/${id}`), {
     async onSuccess() {
-      await queryClient.invalidateQueries("posts");
+      await queryClient.invalidateQueries(["posts", id]);
     },
   });
 };

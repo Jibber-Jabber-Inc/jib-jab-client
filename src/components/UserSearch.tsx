@@ -99,7 +99,12 @@ export const UserSearch = () => {
 
   return (
     <div>
-      <div className={classes.search}>
+      <div
+        className={classes.search}
+        style={{
+          marginTop: 100,
+        }}
+      >
         <div className={classes.searchIcon}>
           <SearchIcon />
         </div>
@@ -117,30 +122,37 @@ export const UserSearch = () => {
         />
       </div>
 
-      {filterUsers(users, userSearch).map(({ username, id }) => (
-        <div>
-          <Button
-            onClick={() => {
-              history.push(urls.user.byId(id));
-            }}
-          >
-            <h1>{username}</h1>
-          </Button>
-          {id !== currentUserId && (
+      <div
+        style={{
+          marginTop: 40,
+          marginLeft: 40,
+        }}
+      >
+        {filterUsers(users, userSearch).map(({ username, id }) => (
+          <div>
             <Button
               onClick={() => {
-                follow(id);
+                history.push(urls.user.byId(id));
               }}
             >
-              <h4>
-                {followedUsers.userInfoDto.map(({ id }) => id).includes(id)
-                  ? "unfollow"
-                  : "follow"}
-              </h4>
+              <h1>{username}</h1>
             </Button>
-          )}
-        </div>
-      ))}
+            {id !== currentUserId && (
+              <Button
+                onClick={() => {
+                  follow(id);
+                }}
+              >
+                <h4>
+                  {followedUsers.userInfoDto.map(({ id }) => id).includes(id)
+                    ? "unfollow"
+                    : "follow"}
+                </h4>
+              </Button>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

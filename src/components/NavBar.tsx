@@ -14,7 +14,7 @@ import Menu from "@material-ui/core/Menu";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import { Link, useHistory } from "react-router-dom";
 import { urls } from "../constants";
-import { useLogOut } from "../api/auth";
+import { useLoggedUser, useLogOut } from "../api/auth";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -75,6 +75,8 @@ export const NavBar = () => {
   const classes = useStyles();
   const history = useHistory();
 
+  const { data: { id } = {} } = useLoggedUser();
+
   const { mutateAsync } = useLogOut();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -111,7 +113,7 @@ export const NavBar = () => {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleViewProfile}>Profile</MenuItem>
+      <MenuItem onClick={handleViewProfile}>Settings</MenuItem>
       <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
     </Menu>
   );
@@ -131,6 +133,11 @@ export const NavBar = () => {
               jibber jabber
             </Typography>
           </Link>
+          <div
+            style={{
+              width: 40,
+            }}
+          />
           <Link
             to={urls.searchUsers}
             style={{
@@ -138,8 +145,24 @@ export const NavBar = () => {
               textDecoration: "none",
             }}
           >
-            <Typography variant="h5" noWrap>
+            <Typography variant="h6" noWrap>
               Search users
+            </Typography>
+          </Link>
+          <div
+            style={{
+              width: 40,
+            }}
+          />
+          <Link
+            to={urls.user.byId(id!)}
+            style={{
+              color: "white",
+              textDecoration: "none",
+            }}
+          >
+            <Typography variant="h6" noWrap>
+              My profile
             </Typography>
           </Link>
           <div className={classes.grow} />
