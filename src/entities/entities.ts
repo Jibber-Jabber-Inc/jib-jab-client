@@ -8,7 +8,10 @@ export interface User {
 }
 
 export type PostData = {
-  id: number;
+  id: string;
   content: string;
-  creationDate: Date;
+  creationDate: string;
+  userInfoDto: User;
+  isLiked: boolean;
+  amountLikes: number;
 };

@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import axios, { AxiosResponse } from "axios";
 import { User } from "../entities/entities";
 
@@ -32,18 +32,26 @@ export type SignInReq = {
 };
 
 export const useSignIn = () => {
-  return useMutation<User, Error, SignInReq>(async (data) => {
-    const { data: signInRes } = await axios.post<
-      SignInReq,
-      AxiosResponse<User>
-    >("/user/auth/login", data);
-    console.log(signInRes);
-    return signInRes;
-  });
+  const queryClient = useQueryClient();
+  return useMutation<User, Error, SignInReq>(
+    async (data) => {
+      const { data: signInRes } = await axios.post<
+        SignInReq,
+        AxiosResponse<User>
+      >("/user/auth/login", data);
+      return signInRes;
+    },
+    {
+      async onSuccess() {
+        console.log("before success");
+        await queryClient.invalidateQueries("loggedUser");
+        console.log("after success");
+      },
+    }
+  );
 };
 
 export type ChangePasswordReq = {
-  id: string;
   oldPassword: string;
   newPassword: string;
 };
@@ -51,6 +59,7 @@ export type ChangePasswordReq = {
 export type ChangePasswordRes = {};
 
 export const useChangePassword = () => {
+  const queryClient = useQueryClient();
   return useMutation<ChangePasswordRes, Error, ChangePasswordReq>(
     async (data) => {
       const { data: changePasswordRes } = await axios.put(
@@ -58,6 +67,35 @@ export const useChangePassword = () => {
         data
       );
       return changePasswordRes;
+    },
+    {
+      async onSettled() {
+        await queryClient.invalidateQueries("loggedUser");
+      },
+    }
+  );
+};
+
+export type EditProfileReq = {
+  password: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+};
+
+export type EditProfileRes = User;
+
+export const useEditProfile = () => {
+  const queryClient = useQueryClient();
+  return useMutation<EditProfileRes, Error, EditProfileReq>(
+    async (req) => {
+      const { data } = await axios.put("/user/users/editProfile", req);
+      return data;
+    },
+    {
+      async onSettled() {
+        await queryClient.invalidateQueries("loggedUser");
+      },
     }
   );
 };
@@ -71,11 +109,21 @@ export const useLoggedUser = () => {
     },
     {
       retry: false,
-      refetchInterval: false,
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      // refetchOnReconnect: false,
-      retryOnMount: false,
+    }
+  );
+};
+
+export const useLogOut = () => {
+  const queryClient = useQueryClient();
+  return useMutation(
+    async () => {
+      return axios.post("/user/auth/logout");
+    },
+    {
+      async onSettled() {
+        await queryClient.cancelQueries("loggedUser");
+        queryClient.removeQueries("loggedUser");
+      },
     }
   );
 };

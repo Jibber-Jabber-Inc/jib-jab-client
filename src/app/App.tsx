@@ -1,38 +1,28 @@
-import { NavBar } from "../components/navBar/NavBar";
 import { Route, Switch } from "react-router-dom";
-import { Home } from "../components/main/Home";
-import { NotExists } from "../components/notExists/NotExists";
-import { SignUp } from "../components/signUp/SignUp";
-import { makeStyles } from "@material-ui/core/styles";
+import { NotExists } from "../components/NotExists";
+import { SignUp } from "../components/SignUp";
 import { urls } from "../constants";
-import { LogIn } from "../components/logIn/LogIn";
-import { Profile } from "../components/profile/Profile";
+import { LogIn } from "../components/LogIn";
 import { actions, useAppDispatch, useAppSelector } from "../store";
 import { selectSession } from "../store/slices/user";
 import ProtectedRoute, {
   ProtectedRouteProps,
-} from "../components/protectedRoute/ProtectedRoute";
-import { Redirect } from "react-router";
+} from "../components/ProtectedRoute";
 import { useLoggedUser } from "../api/auth";
-
-const useStyles = makeStyles({
-  root: {
-    marginTop: 70,
-  },
-});
+import { LoggedIn } from "../components/LoggedIn";
 
 const App = () => {
-  const classes = useStyles();
   const session = useAppSelector(selectSession);
   const dispatch = useAppDispatch();
 
+  console.log("use logged user app");
   const { data: user, isLoading } = useLoggedUser();
+  console.log({ isLoading });
 
   if (isLoading) return <span>Loading...</span>;
-  if (user) dispatch(actions.session.setUser(user));
 
   const defaultProtectedRouteProps: ProtectedRouteProps = {
-    isAuthenticated: session.isAuthenticated,
+    isAuthenticated: user != null,
     authenticationPath: urls.logIn,
     redirectPath: session.redirectPath,
     setRedirectPath: (path) => dispatch(actions.session.setRedirectPath(path)),
@@ -41,29 +31,15 @@ const App = () => {
   return (
     <div className="App">
       <Switch>
-        <Route exact path={urls.notFound} component={NotExists} />
         <Route exact path={urls.signUp} component={SignUp} />
         <Route exact path={urls.logIn} component={LogIn} />
-        <div>
-          <NavBar />
-          <div className={classes.root}>
-            <ProtectedRoute
-              {...defaultProtectedRouteProps}
-              exact
-              path={urls.viewProfile}
-              component={Profile}
-            />
-            <ProtectedRoute
-              {...defaultProtectedRouteProps}
-              exact
-              path={urls.home}
-              component={Home}
-            />
-          </div>
-        </div>
-
-        {/*not working*/}
-        <Redirect to={urls.notFound} />
+        <Route exact path={urls.notFound} component={NotExists} />
+        <ProtectedRoute
+          {...defaultProtectedRouteProps}
+          path={urls.home}
+          component={LoggedIn}
+        />
+        <Route component={NotExists} />
       </Switch>
     </div>
   );
