@@ -13,10 +13,9 @@ import * as yup from "yup";
 import { errorMessages, urls } from "../constants";
 import { Link, useHistory } from "react-router-dom";
 import { useSignIn } from "../api/auth";
-import { useAppSelector } from "../store";
 import { ErrorAlert } from "./ErrorAlert";
 import { FormField } from "./FormField";
-import { selectRedirectPath } from "../store/slices/user";
+import { useSessionStore } from "../store/session";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -61,7 +60,7 @@ type SignInFormData = yup.InferType<typeof schema>;
 export const LogIn = () => {
   const classes = useStyles();
   const history = useHistory();
-  const redirectPath = useAppSelector(selectRedirectPath);
+  const { redirectPath } = useSessionStore();
 
   const { mutateAsync, isLoading, isError } = useSignIn();
 

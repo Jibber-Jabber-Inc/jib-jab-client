@@ -42,10 +42,9 @@ export const useSignIn = () => {
       return signInRes;
     },
     {
-      async onSuccess() {
-        console.log("before success");
-        await queryClient.invalidateQueries("loggedUser");
-        console.log("after success");
+      async onSuccess(user) {
+        queryClient.setQueryData("loggedUser", user);
+        // await queryClient.invalidateQueries("loggedUser");
       },
     }
   );

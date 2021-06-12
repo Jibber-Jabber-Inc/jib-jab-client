@@ -4,12 +4,13 @@ import { usePostsByUserId } from "../api/post";
 import { PostList } from "./PostList";
 import { Typography } from "@material-ui/core";
 import { CreatePost } from "./CreatePost";
+import { useLoggedUser } from "../api/auth";
 
 export const UserProfile = () => {
   const { id } = useParams<{ id: string }>();
   const { data: user, isLoading } = useUserInfoById(id);
   const { data: posts, isLoading: isPostsLoading } = usePostsByUserId(id);
-  // const { data: { id: loggedUserId } = {} } = useLoggedUser();
+  const { data: { id: loggedUserId } = {} } = useLoggedUser();
 
   if (isLoading) return <h4>loading...</h4>;
   if (isPostsLoading) return <h4>loading...</h4>;
@@ -38,13 +39,16 @@ export const UserProfile = () => {
           {user.firstName} {user.lastName}
         </Typography>
       </div>
-      <div
-        style={{
-          marginTop: 30,
-        }}
-      >
-        <CreatePost />
-      </div>
+
+      {loggedUserId === id && (
+        <div
+          style={{
+            marginTop: 30,
+          }}
+        >
+          <CreatePost />
+        </div>
+      )}
 
       <div
         style={{

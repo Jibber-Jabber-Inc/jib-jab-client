@@ -97,6 +97,8 @@ export const UserSearch = () => {
   if (!users) return <h4>Error</h4>;
   if (!followedUsers) return <h4>Error</h4>;
 
+  const isFollowed = isIncluded(followedUsers.userInfoDto);
+
   return (
     <div>
       <div
@@ -143,11 +145,16 @@ export const UserSearch = () => {
                   follow(id);
                 }}
               >
-                <h4>
-                  {followedUsers.userInfoDto.map(({ id }) => id).includes(id)
-                    ? "unfollow"
-                    : "follow"}
-                </h4>
+                <h4>{isFollowed(id) ? "unfollow" : "follow"}</h4>
+              </Button>
+            )}
+            {id !== currentUserId && (
+              <Button
+                onClick={() => {
+                  history.push(urls.chat.byId(id));
+                }}
+              >
+                <h5>Send Message</h5>
               </Button>
             )}
           </div>
@@ -156,3 +163,6 @@ export const UserSearch = () => {
     </div>
   );
 };
+
+const isIncluded = (followedUsers: User[]) => (userId: string) =>
+  followedUsers.map(({ id }) => id).includes(userId);
