@@ -44,7 +44,6 @@ export const useSignIn = () => {
     {
       async onSuccess(user) {
         queryClient.setQueryData("loggedUser", user);
-        // await queryClient.invalidateQueries("loggedUser");
       },
     }
   );
@@ -108,6 +107,11 @@ export const useLoggedUser = () => {
     },
     {
       retry: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+      refetchInterval: false,
+      refetchIntervalInBackground: false,
+      staleTime: Infinity,
     }
   );
 };
@@ -120,8 +124,7 @@ export const useLogOut = () => {
     },
     {
       async onSettled() {
-        await queryClient.cancelQueries("loggedUser");
-        queryClient.removeQueries("loggedUser");
+        queryClient.setQueryData("loggedUser", null);
       },
     }
   );

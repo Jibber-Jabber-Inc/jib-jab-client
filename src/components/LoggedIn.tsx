@@ -31,7 +31,7 @@ export const LoggedIn = () => {
         <Route exact path={urls.searchUsers} component={UserSearch} />
         <Route exact path={urls.home} component={Home} />
         <Route exact path={urls.user.path} component={UserProfile} />
-        <Route exact path={urls.chat.path} component={Chat} />
+        <Route exact path={urls.chat} component={Chat} />
         <Route component={NotExists} />
       </Switch>
     </div>

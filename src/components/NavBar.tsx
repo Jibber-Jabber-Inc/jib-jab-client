@@ -149,6 +149,7 @@ export const NavBar = () => {
               Search users
             </Typography>
           </Link>
+
           <div
             style={{
               width: 40,
@@ -163,6 +164,22 @@ export const NavBar = () => {
           >
             <Typography variant="h6" noWrap>
               My profile
+            </Typography>
+          </Link>
+          <div
+            style={{
+              width: 40,
+            }}
+          />
+          <Link
+            to={urls.chat}
+            style={{
+              color: "white",
+              textDecoration: "none",
+            }}
+          >
+            <Typography variant="h6" noWrap>
+              Chat
             </Typography>
           </Link>
           <div className={classes.grow} />

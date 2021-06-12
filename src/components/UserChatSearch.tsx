@@ -1,4 +1,4 @@
-import { useFollow, useFollowedUsers, useUsers } from "../api/users";
+import { useUsers } from "../api/users";
 import SearchIcon from "@material-ui/icons/Search";
 import InputBase from "@material-ui/core/InputBase";
 import { useState } from "react";
@@ -9,10 +9,9 @@ import {
   Theme,
 } from "@material-ui/core/styles";
 import { User } from "../entities/entities";
-import { Button } from "@material-ui/core";
+import { Button, Typography } from "@material-ui/core";
 import { useLoggedUser } from "../api/auth";
-import { useHistory } from "react-router-dom";
-import { urls } from "../constants";
+import { useChatStore } from "../store/session";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -66,33 +65,32 @@ const filterUsers = (users: User[], input: string | null) => {
   );
 };
 
-export const UserSearch = () => {
+export const UserChatSearch = () => {
   const classes = useStyles();
   const [userSearch, setUserSearch] = useState("");
   const { data: user } = useLoggedUser();
   const { id: currentUserId } = user!;
   const { data: users, isLoading } = useUsers();
-  const { mutate: follow } = useFollow();
-  const { data: followedUsers, isLoading: isLoadingFollowed } =
-    useFollowedUsers();
 
-  const history = useHistory();
+  const { activeContactId, setActiveContactId } = useChatStore(
+    ({ activeContactId, setActiveContactId }) => ({
+      activeContactId,
+      setActiveContactId,
+    })
+  );
 
   if (isLoading) return <h4>loading...</h4>;
-  if (isLoadingFollowed) return <h4>loading...</h4>;
-
   if (!users) return <h4>Error</h4>;
-  if (!followedUsers) return <h4>Error</h4>;
-
-  const isFollowed = isIncluded(followedUsers.userInfoDto);
 
   return (
     <div>
       <div
         className={classes.search}
-        style={{
-          marginTop: 100,
-        }}
+        style={
+          {
+            // marginTop: 100,
+          }
+        }
       >
         <div className={classes.searchIcon}>
           <SearchIcon />
@@ -117,30 +115,20 @@ export const UserSearch = () => {
           marginLeft: 40,
         }}
       >
-        {filterUsers(users, userSearch).map(({ username, id }) => (
-          <div>
-            <Button
-              onClick={() => {
-                history.push(urls.user.byId(id));
-              }}
-            >
-              <h1>{username}</h1>
-            </Button>
-            {id !== currentUserId && (
+        {filterUsers(users, userSearch).map(({ username, id }) =>
+          currentUserId === id ? null : (
+            <div>
               <Button
                 onClick={() => {
-                  follow(id);
+                  setActiveContactId(id);
                 }}
               >
-                <h4>{isFollowed(id) ? "unfollow" : "follow"}</h4>
+                <Typography variant={"h5"}>{username}</Typography>
               </Button>
-            )}
-          </div>
-        ))}
+            </div>
+          )
+        )}
       </div>
     </div>
   );
 };
-
-const isIncluded = (followedUsers: User[]) => (userId: string) =>
-  followedUsers.map(({ id }) => id).includes(userId);

@@ -10,10 +10,7 @@ export const urls = {
     byId: (id: string) => `/user/${id}`,
   },
   searchUsers: "/searchUser",
-  chat: {
-    path: "/chat/:userId",
-    byId: (id: string) => `/chat/${id}`,
-  },
+  chat: "/chat",
 };
 
 export const errorMessages = {

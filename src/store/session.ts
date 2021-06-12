@@ -3,6 +3,7 @@ import Stomp from "stompjs";
 import SockJs from "sockjs-client";
 import { pipe } from "ramda";
 import { devtools } from "zustand/middleware";
+import { User } from "../entities/entities";
 
 const createStore = pipe(devtools, create);
 
@@ -16,6 +17,16 @@ export const useSessionStore = createStore<SessionState>((set) => ({
   setRedirectPath: (path) => set({ redirectPath: path }),
 }));
 
+export interface ChatMessageCreation {
+  senderId: string;
+  content: string;
+}
+
+export enum ChatMessageStatus {
+  RECEIVED = "RECEIVED",
+  READ = "READ",
+}
+
 export interface ChatMessage {
   senderId: string;
   recipientId: string;
@@ -23,9 +34,11 @@ export interface ChatMessage {
   recipientName: string;
   content: string;
   timestamp: Date;
+  status: ChatMessageStatus;
 }
 
 interface ChatState {
+  activeContactId: string | null;
   messagesByUserId: { [userId: string]: ChatMessage[] };
   stompClient: Stomp.Client | null;
 
@@ -34,10 +47,12 @@ interface ChatState {
     onMessageReceived?: (message: ChatMessage) => void
   ): void;
 
-  sendMessage(message: ChatMessage): boolean;
+  sendMessage(message: ChatMessageCreation): boolean;
+  setActiveContactId: (id: string) => void;
 }
 
 export const useChatStore = createStore<ChatState>((set, get) => ({
+  activeContactId: null,
   messagesByUserId: {},
   stompClient: null,
   initChat(userId, onMessageReceived) {
@@ -48,13 +63,16 @@ export const useChatStore = createStore<ChatState>((set, get) => ({
         "/user/" + userId + "/queue/messages",
         (message) => {
           const chatMessage = JSON.parse(message.body) as ChatMessage;
+
+          const id =
+            chatMessage.senderId === userId
+              ? chatMessage.recipientId
+              : chatMessage.senderId;
+
           set((state) => ({
             messagesByUserId: {
               ...state.messagesByUserId,
-              [chatMessage.senderId]: [
-                ...(state.messagesByUserId[chatMessage.senderId] ?? []),
-                chatMessage,
-              ],
+              [id]: [...(state.messagesByUserId[id] ?? []), chatMessage],
             },
           }));
           onMessageReceived?.(chatMessage);
@@ -65,18 +83,20 @@ export const useChatStore = createStore<ChatState>((set, get) => ({
   },
   sendMessage(chatMessage) {
     const stompClient = get().stompClient;
-    if (stompClient === null || !stompClient.connected) return false;
-    console.log("about to send");
-    stompClient.send("/app/chat", {}, JSON.stringify(chatMessage));
-    set((state) => ({
-      messagesByUserId: {
-        ...state.messagesByUserId,
-        [chatMessage.recipientId]: [
-          ...(state.messagesByUserId[chatMessage.recipientId] ?? []),
-          chatMessage,
-        ],
-      },
-    }));
+    const activeContact = get().activeContactId;
+
+    if (!stompClient?.connected || !activeContact) return false;
+    stompClient.send(
+      "/app/chat",
+      {},
+      JSON.stringify({
+        ...chatMessage,
+        recipientId: activeContact,
+      })
+    );
     return true;
+  },
+  setActiveContactId(id) {
+    set({ activeContactId: id });
   },
 }));
