@@ -15,6 +15,9 @@ import AccountCircle from "@material-ui/icons/AccountCircle";
 import { Link, useHistory } from "react-router-dom";
 import { urls } from "../constants";
 import { useLoggedUser, useLogOut } from "../api/auth";
+import { Badge } from "@material-ui/core";
+import { Notifications } from "@material-ui/icons";
+import { ChatMessageStatus, useChatStore } from "../store/session";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -76,8 +79,20 @@ export const NavBar = () => {
   const history = useHistory();
 
   const { data: { id } = {} } = useLoggedUser();
-
   const { mutateAsync } = useLogOut();
+
+  const notifications = useChatStore((state) => {
+    return Object.values(state.messagesByUserId ?? {})
+      .map(
+        (messages) =>
+          messages.filter(
+            (message) =>
+              message.status === ChatMessageStatus.RECEIVED &&
+              message.senderId !== id
+          ).length
+      )
+      .reduce((a, b) => a + b, 0);
+  });
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -184,6 +199,11 @@ export const NavBar = () => {
           </Link>
           <div className={classes.grow} />
           <div>
+            <IconButton color="inherit">
+              <Badge badgeContent={notifications} color="secondary">
+                <Notifications />
+              </Badge>
+            </IconButton>
             <IconButton
               edge="end"
               aria-label="account of current user"

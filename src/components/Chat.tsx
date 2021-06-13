@@ -1,5 +1,5 @@
 import { ChatMessage, ChatMessageStatus, useChatStore } from "../store/session";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, TextField } from "@material-ui/core";
 import { useLoggedUser } from "../api/auth";
 import { UserChatSearch } from "./UserChatSearch";
@@ -21,6 +21,16 @@ export const Chat = () => {
     activeContactId: state.activeContactId,
   }));
   const [input, setInput] = useState("");
+
+  useEffect(() => {
+    messages
+      .filter(
+        (message) =>
+          message.status === ChatMessageStatus.RECEIVED &&
+          message.senderId !== currentUser!.id
+      )
+      .forEach((message) => {});
+  }, [messages]);
 
   const send = () => {
     const message = {
@@ -47,13 +57,19 @@ export const Chat = () => {
         <UserChatSearch />
       </div>
       {activeContactId && (
-        <div>
+        <div
+          style={{
+            width: "100%",
+            height: "100vh",
+            padding: "0 20px",
+          }}
+        >
           <div
             style={{
               display: "flex",
               flexDirection: "column",
               gap: 5,
-              width: 300,
+              width: "100%",
               height: "75vh",
               overflowY: "scroll",
             }}
@@ -72,7 +88,7 @@ export const Chat = () => {
               </div>
             ))}
           </div>
-          <div style={{ position: "absolute", bottom: 40, width: 300 }}>
+          <div style={{ position: "absolute", bottom: 20, width: "70vw" }}>
             <div
               style={{
                 display: "flex",
@@ -126,7 +142,7 @@ const MessageBox = ({ message }: MessageBoxProps) => {
       >
         <span
           style={{
-            maxWidth: 280,
+            maxWidth: "30%",
             overflowX: "hidden",
           }}
         >
