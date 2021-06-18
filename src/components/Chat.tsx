@@ -30,7 +30,7 @@ export const Chat = () => {
     readMessage: state.readMessage,
   }));
 
-  useGetMessagesById(activeContactId, {
+  useGetMessagesById(activeContactId, currentUser!.id, {
     onSuccess(messages) {
       addMessages(messages);
     },
