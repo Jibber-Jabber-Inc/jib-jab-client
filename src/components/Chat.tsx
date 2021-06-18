@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button, TextField } from "@material-ui/core";
 import { useLoggedUser } from "../api/auth";
 import { UserChatSearch } from "./UserChatSearch";
@@ -7,6 +7,7 @@ import { DoneAllRounded, DoneRounded } from "@material-ui/icons";
 import { ChatMessageStatus, ChatMessage } from "../entities";
 import { useChatStore } from "../store/chat";
 import { useGetMessagesById } from "../api/message";
+import { equals } from "ramda";
 
 export const Chat = () => {
   const { data: currentUser } = useLoggedUser();
@@ -17,6 +18,7 @@ export const Chat = () => {
     activeContactId,
     addMessages,
     removeContact,
+    readMessage,
   } = useChatStore((state) => ({
     messages: state.activeContactId
       ? state.messagesByUserId[state.activeContactId]
@@ -25,15 +27,35 @@ export const Chat = () => {
     activeContactId: state.activeContactId,
     addMessages: state.addMessages,
     removeContact: () => state.setActiveContactId(null),
+    readMessage: state.readMessage,
   }));
 
-  // useGetMessagesById(activeContactId, {
-  //   onSuccess(messages) {
-  //     addMessages(messages);
-  //   },
-  // });
+  useGetMessagesById(activeContactId, {
+    onSuccess(messages) {
+      addMessages(messages);
+    },
+  });
 
   const [input, setInput] = useState("");
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    messages.forEach((m) => {
+      if (
+        equals(m.recipientId, currentUser!.id) &&
+        equals(m.status, ChatMessageStatus.RECEIVED)
+      )
+        readMessage(m);
+    });
+  }, [currentUser, messages, readMessage]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   useEffect(() => {
     return removeContact;
@@ -59,7 +81,7 @@ export const Chat = () => {
         display: "flex",
         flexDirection: "row",
         gap: 40,
-        marginTop: 90,
+        marginTop: 100,
       }}
     >
       <div>
@@ -96,6 +118,7 @@ export const Chat = () => {
                 <MessageBox message={message} />
               </div>
             ))}
+            <div ref={messagesEndRef} />
           </div>
           <div style={{ position: "absolute", bottom: 20, width: "70vw" }}>
             <div

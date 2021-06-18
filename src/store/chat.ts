@@ -6,7 +6,7 @@ import { createStore } from "./utils";
 
 interface ChatState {
   activeContactId: string | null;
-  messagesByUserId: { [userId: string]: ChatMessage[] };
+  messagesByUserId: { [userId: string]: ChatMessage[] | undefined };
   stompClient: Stomp.Client | null;
 
   initChat(userId: string): void;
@@ -14,6 +14,7 @@ interface ChatState {
   sendMessage(message: ChatMessageCreation): boolean;
   setActiveContactId(id: string | null): void;
   addMessages(messages: ChatMessage[]): void;
+  readMessage(message: ChatMessage): void;
 }
 
 export const useChatStore = createStore<ChatState>((set, get) => ({
@@ -110,5 +111,16 @@ export const useChatStore = createStore<ChatState>((set, get) => ({
         [id]: messages,
       },
     }));
+  },
+  readMessage(message) {
+    const client = get().stompClient;
+    if (client == null) return;
+    client.send(
+      "/app/read",
+      {},
+      JSON.stringify({
+        messageId: message.id,
+      })
+    );
   },
 }));

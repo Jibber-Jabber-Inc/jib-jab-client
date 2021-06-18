@@ -86,11 +86,11 @@ export const NavBar = () => {
     return Object.values(state.messagesByUserId ?? {})
       .map(
         (messages) =>
-          messages.filter(
+          messages?.filter(
             (message) =>
               message.status === ChatMessageStatus.RECEIVED &&
               message.senderId !== id
-          ).length
+          ).length ?? 0
       )
       .reduce((a, b) => a + b, 0);
   });

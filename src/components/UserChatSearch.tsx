@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
-type MessagesByUserId = { [userId: string]: ChatMessage[] };
+type MessagesByUserId = { [userId: string]: ChatMessage[] | undefined };
 
 const processUsers = (
   users: User[],
@@ -72,19 +72,21 @@ const processUsers = (
   return pipe(
     removeCurrentUser(currentUserId),
     inputFilter(input),
-    addNotifications(messagesByUserId),
+    addNotifications(messagesByUserId, currentUserId),
     sortByMessagesDate(messagesByUserId)
   )(users);
 };
 
 type UserWithNotifications = User & { notifications: number };
 
-const addNotifications = (messagesByUserId: MessagesByUserId) =>
+const addNotifications = (
+  messagesByUserId: MessagesByUserId,
+  currentUserId: string
+) =>
   map((user: User): UserWithNotifications => {
-    const notifications =
-      messagesByUserId[user.id]?.filter((m) =>
-        not(equals(m.status, ChatMessageStatus.READ))
-      )?.length ?? 0;
+    const notifications = (messagesByUserId[user.id] ?? [])
+      .filter((m) => equals(m.recipientId, currentUserId))
+      .filter((m) => not(equals(m.status, ChatMessageStatus.READ))).length;
 
     return {
       ...user,
@@ -95,7 +97,7 @@ const addNotifications = (messagesByUserId: MessagesByUserId) =>
 const sortByMessagesDate = (messagesByUserId: MessagesByUserId) =>
   sortBy(
     (user: UserWithNotifications) =>
-      last(messagesByUserId[user.id] ?? [])?.timestamp ?? false
+      -(last(messagesByUserId[user.id] ?? [])?.timestamp?.getTime?.() ?? 0)
   );
 
 const removeCurrentUser = (currentUserId: string) => (users: User[]) =>
