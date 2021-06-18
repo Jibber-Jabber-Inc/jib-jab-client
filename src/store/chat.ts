@@ -6,8 +6,8 @@ import { createStore } from "./utils";
 
 const socketUrl =
   process.env.NODE_ENV === "production"
-    ? "/api/message/ws"
-    : "http://localhost:8082/api/message/ws";
+    ? "/ws"
+    : "http://localhost:8082/ws";
 
 interface ChatState {
   activeContactId: string | null;
