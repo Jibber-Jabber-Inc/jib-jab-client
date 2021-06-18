@@ -4,6 +4,11 @@ import Stomp from "stompjs";
 import { ChatMessage, ChatMessageCreation } from "../entities";
 import { createStore } from "./utils";
 
+const socketUrl =
+  process.env.NODE_ENV === "production"
+    ? "/api/message/ws"
+    : "http://localhost:8082/api/message/ws";
+
 interface ChatState {
   activeContactId: string | null;
   messagesByUserId: { [userId: string]: ChatMessage[] | undefined };
@@ -22,7 +27,7 @@ export const useChatStore = createStore<ChatState>((set, get) => ({
   messagesByUserId: {},
   stompClient: null,
   initChat(userId) {
-    const socket = new SockJs("http://localhost:8082/api/message/ws");
+    const socket = new SockJs(socketUrl);
     const stompClient = Stomp.over(socket);
     stompClient.connect({}, () => {
       stompClient.subscribe(
