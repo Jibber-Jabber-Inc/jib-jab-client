@@ -5,9 +5,17 @@ import * as yup from "yup";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import TextField from "@material-ui/core/TextField";
+<<<<<<< HEAD:src/components/ChangePassword.tsx
 import { errorMessages } from "../constants";
 import { useChangePassword, useLoggedUser } from "../api/auth";
 import { ErrorAlert } from "./ErrorAlert";
+=======
+import { errorMessages } from "../../constants";
+import { useAppSelector } from "../../store";
+import { useChangePassword } from "../../api/auth";
+import { selectUser } from "../../store/slices/session";
+import { ErrorAlert } from "../ErrorAlert";
+>>>>>>> main:src/components/editProfile/ChangePassword.tsx
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
