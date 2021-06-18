@@ -13,7 +13,7 @@ export const useGetMessagesById = (
     ["message", id],
     async () => {
       const { data } = await axios.get<ChatMessage[]>(
-        `/message/messages/${id}?userId=${userId}`
+        `/message/messages/${id}/${userId}`
       );
       return data;
     },
