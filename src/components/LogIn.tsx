@@ -9,20 +9,12 @@ import Typography from "@material-ui/core/Typography";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { useForm } from "react-hook-form";
 import { Link, useHistory } from "react-router-dom";
-<<<<<<< HEAD:src/components/LogIn.tsx
 import * as yup from "yup";
 import { useSignIn } from "../api/auth";
 import { errorMessages, urls } from "../constants";
 import { useSessionStore } from "../store/session";
 import { ErrorAlert } from "./ErrorAlert";
 import { FormField } from "./FormField";
-=======
-import { useSignIn } from "../../api/auth";
-import { actions, useAppDispatch, useAppSelector } from "../../store";
-import { ErrorAlert } from "../ErrorAlert";
-import { FormField } from "../forms/FormField";
-import { selectRedirectPath } from "../../store/slices/session";
->>>>>>> main:src/components/logIn/LogIn.tsx
 
 const useStyles = makeStyles((theme) => ({
   root: {
