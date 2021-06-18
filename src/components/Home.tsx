@@ -16,6 +16,9 @@ export const Home = () => {
   const classes = useStyles();
   return (
     <Container className={classes.root}>
+      <div>
+        <h3>My Feed</h3>
+      </div>
       <CreatePost />
       <Feed />
     </Container>

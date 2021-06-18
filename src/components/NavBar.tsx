@@ -80,7 +80,7 @@ export const NavBar = () => {
   const history = useHistory();
 
   const { data: { id, username } = {} } = useLoggedUser();
-  const { mutateAsync } = useLogOut();
+  const { mutateAsync: logOut } = useLogOut();
 
   const notifications = useChatStore((state) => {
     return Object.values(state.messagesByUserId ?? {})
@@ -114,7 +114,7 @@ export const NavBar = () => {
 
   const handleSignOut = async () => {
     handleMenuClose();
-    await mutateAsync();
+    await logOut();
     history.push(urls.logIn);
   };
 
@@ -199,7 +199,14 @@ export const NavBar = () => {
             </Typography>
           </Link>
           <div className={classes.grow} />
-          <div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <h2 style={{ marginRight: 10 }}>@{username}</h2>
             <IconButton color="inherit">
               <Badge badgeContent={notifications} color="secondary">
                 <Notifications />
@@ -215,8 +222,6 @@ export const NavBar = () => {
             >
               <AccountCircle />
             </IconButton>
-            <div>{username}</div>
-            <div>{id}</div>
           </div>
         </Toolbar>
       </AppBar>
