@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { User } from "../entities/entities";
+import { User } from "../entities";
 import axios from "axios";
 
 export const useUsers = () =>

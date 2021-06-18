@@ -1,13 +1,14 @@
 import { Route, Switch } from "react-router-dom";
-import { NotExists } from "../components/NotExists";
-import { SignUp } from "../components/SignUp";
-import { urls } from "../constants";
-import { LogIn } from "../components/LogIn";
-import ProtectedRoute, {
-  ProtectedRouteProps,
-} from "../components/ProtectedRoute";
 import { useLoggedUser } from "../api/auth";
 import { LoggedIn } from "../components/LoggedIn";
+import { LogIn } from "../components/LogIn";
+import { NotExists } from "../components/NotExists";
+import {
+  ProtectedRoute,
+  ProtectedRouteProps,
+} from "../components/ProtectedRoute";
+import { SignUp } from "../components/SignUp";
+import { urls } from "../constants";
 import { useSessionStore } from "../store/session";
 
 const App = () => {
@@ -18,7 +19,7 @@ const App = () => {
   if (isLoading) return <span>Loading...</span>;
 
   const defaultProtectedRouteProps: ProtectedRouteProps = {
-    isAuthenticated: user != null,
+    isAuthenticated: user !== undefined,
     authenticationPath: urls.logIn,
     redirectPath,
     setRedirectPath,

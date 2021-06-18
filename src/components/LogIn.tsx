@@ -1,21 +1,20 @@
-import React from "react";
+import { yupResolver } from "@hookform/resolvers/yup";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
+import Grid from "@material-ui/core/Grid";
 import MLink from "@material-ui/core/Link";
 import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
-import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
+import Typography from "@material-ui/core/Typography";
+import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import { errorMessages, urls } from "../constants";
 import { Link, useHistory } from "react-router-dom";
+import * as yup from "yup";
 import { useSignIn } from "../api/auth";
+import { errorMessages, urls } from "../constants";
+import { useSessionStore } from "../store/session";
 import { ErrorAlert } from "./ErrorAlert";
 import { FormField } from "./FormField";
-import { useSessionStore } from "../store/session";
 
 const useStyles = makeStyles((theme) => ({
   root: {

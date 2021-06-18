@@ -1,23 +1,24 @@
-import React from "react";
+import { Badge } from "@material-ui/core";
+import AppBar from "@material-ui/core/AppBar";
+import IconButton from "@material-ui/core/IconButton";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
 import {
   createStyles,
   fade,
   makeStyles,
   Theme,
 } from "@material-ui/core/styles";
-import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
-import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
-import MenuItem from "@material-ui/core/MenuItem";
-import Menu from "@material-ui/core/Menu";
-import AccountCircle from "@material-ui/icons/AccountCircle";
-import { Link, useHistory } from "react-router-dom";
-import { urls } from "../constants";
-import { useLoggedUser, useLogOut } from "../api/auth";
-import { Badge } from "@material-ui/core";
 import { Notifications } from "@material-ui/icons";
-import { ChatMessageStatus, useChatStore } from "../store/session";
+import AccountCircle from "@material-ui/icons/AccountCircle";
+import { useState } from "react";
+import { Link, useHistory } from "react-router-dom";
+import { useLoggedUser, useLogOut } from "../api/auth";
+import { urls } from "../constants";
+import { ChatMessageStatus } from "../entities";
+import { useChatStore } from "../store/chat";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -78,7 +79,7 @@ export const NavBar = () => {
   const classes = useStyles();
   const history = useHistory();
 
-  const { data: { id } = {} } = useLoggedUser();
+  const { data: { id, username } = {} } = useLoggedUser();
   const { mutateAsync } = useLogOut();
 
   const notifications = useChatStore((state) => {
@@ -94,7 +95,7 @@ export const NavBar = () => {
       .reduce((a, b) => a + b, 0);
   });
 
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const isMenuOpen = Boolean(anchorEl);
 
@@ -214,6 +215,8 @@ export const NavBar = () => {
             >
               <AccountCircle />
             </IconButton>
+            <div>{username}</div>
+            <div>{id}</div>
           </div>
         </Toolbar>
       </AppBar>

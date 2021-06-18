@@ -1,10 +1,12 @@
-import { ChatMessage, ChatMessageStatus, useChatStore } from "../store/session";
 import { useEffect, useState } from "react";
 import { Button, TextField } from "@material-ui/core";
 import { useLoggedUser } from "../api/auth";
 import { UserChatSearch } from "./UserChatSearch";
 import { formatDistanceToNow } from "date-fns";
 import { DoneAllRounded, DoneRounded } from "@material-ui/icons";
+import { ChatMessageStatus, ChatMessage } from "../entities";
+import { useChatStore } from "../store/chat";
+import { useGetMessagesById } from "../api/message";
 
 export const Chat = () => {
   const { data: currentUser } = useLoggedUser();
@@ -13,26 +15,33 @@ export const Chat = () => {
     messages = [],
     sendMessage,
     activeContactId,
+    addMessages,
+    removeContact,
   } = useChatStore((state) => ({
     messages: state.activeContactId
       ? state.messagesByUserId[state.activeContactId]
       : [],
     sendMessage: state.sendMessage,
     activeContactId: state.activeContactId,
+    addMessages: state.addMessages,
+    removeContact: () => state.setActiveContactId(null),
   }));
+
+  // useGetMessagesById(activeContactId, {
+  //   onSuccess(messages) {
+  //     addMessages(messages);
+  //   },
+  // });
+
   const [input, setInput] = useState("");
 
   useEffect(() => {
-    messages
-      .filter(
-        (message) =>
-          message.status === ChatMessageStatus.RECEIVED &&
-          message.senderId !== currentUser!.id
-      )
-      .forEach((message) => {});
-  }, [messages]);
+    return removeContact;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const send = () => {
+    if (input === "") return;
     const message = {
       senderId: currentUser!.id,
       content: input,
@@ -76,7 +85,7 @@ export const Chat = () => {
           >
             {messages.map((message) => (
               <div
-                key={`${message.senderId}-${message.recipientId}-${message.timestamp}`}
+                key={message.id}
                 style={{
                   alignSelf:
                     message.senderId === currentUser!.id
@@ -100,7 +109,7 @@ export const Chat = () => {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={(e) => {
-                  console.log(e);
+                  // console.log(e);
                   e.key === "Enter" && send();
                 }}
               />
@@ -127,6 +136,7 @@ const MessageBox = ({ message }: MessageBoxProps) => {
   return (
     <div
       style={{
+        maxWidth: "200px",
         padding: "7px",
         border: "1px solid aliceblue",
         backgroundColor: "aliceblue",
@@ -142,7 +152,7 @@ const MessageBox = ({ message }: MessageBoxProps) => {
       >
         <span
           style={{
-            maxWidth: "30%",
+            // width: " 100%",
             overflowX: "hidden",
           }}
         >

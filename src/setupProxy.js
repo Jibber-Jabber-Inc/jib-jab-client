@@ -13,15 +13,16 @@ module.exports = (app) => {
     })
   );
 
+  // app.use(
+  //   proxy("/ws", {
+  //     target: "http://localhost:8082/api/message",
+  //     // ws: true,
+  //   })
+  // );
+
   app.use(
     proxy("/api/message", {
       target: "http://localhost:8082",
     })
   );
-
-  // app.use(
-  //   proxy("/ws", {
-  //     target: "http://localhost:8082",
-  //   })
-  // );
 };

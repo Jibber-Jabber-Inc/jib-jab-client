@@ -40,10 +40,7 @@ const schema = yup.object({
   username: yup.string().required(errorMessages.required),
   firstName: yup.string().required(errorMessages.required),
   lastName: yup.string().required(errorMessages.required),
-  email: yup
-    .string()
-    .email(errorMessages.field)
-    .required(errorMessages.required),
+  email: yup.string().required(errorMessages.required),
   password: yup.string().required(errorMessages.required),
 });
 

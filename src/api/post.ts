@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import axios from "axios";
-import { PostData, User } from "../entities/entities";
+import { PostData, User } from "../entities";
 import { useLoggedUser } from "./auth";
 
 export type PostForm = {

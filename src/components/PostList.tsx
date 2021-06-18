@@ -2,7 +2,7 @@ import React from "react";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { Post } from "./Post";
 import { List, ListItem } from "@material-ui/core";
-import { PostData } from "../entities/entities";
+import { PostData } from "../entities";
 
 const useStyles = makeStyles(() =>
   createStyles({

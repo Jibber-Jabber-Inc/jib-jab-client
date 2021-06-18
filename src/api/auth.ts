@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import axios, { AxiosResponse } from "axios";
-import { User } from "../entities/entities";
+import { User } from "../entities";
 
 export type SignUpReq = {
   username: string;

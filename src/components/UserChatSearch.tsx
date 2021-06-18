@@ -1,17 +1,18 @@
-import { useUsers } from "../api/users";
-import SearchIcon from "@material-ui/icons/Search";
+import { Button, Typography } from "@material-ui/core";
 import InputBase from "@material-ui/core/InputBase";
-import { useState } from "react";
 import {
   createStyles,
   fade,
   makeStyles,
   Theme,
 } from "@material-ui/core/styles";
-import { User } from "../entities/entities";
-import { Button, Typography } from "@material-ui/core";
+import SearchIcon from "@material-ui/icons/Search";
+import { equals, filter, identity, last, map, not, pipe, sortBy } from "ramda";
+import { useState } from "react";
 import { useLoggedUser } from "../api/auth";
-import { useChatStore } from "../store/session";
+import { useUsers } from "../api/users";
+import { ChatMessage, ChatMessageStatus, User } from "../entities";
+import { useChatStore } from "../store/chat";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -54,11 +55,56 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
+type MessagesByUserId = { [userId: string]: ChatMessage[] };
 
-const filterUsers = (users: User[], input: string | null) => {
-  if (input === "" || input == null) return users;
-  return users.filter(
-    ({ email, firstName, lastName }) =>
+const processUsers = (
+  users: User[],
+  {
+    input,
+    currentUserId,
+    messagesByUserId,
+  }: {
+    input: string | null;
+    currentUserId: string;
+    messagesByUserId: MessagesByUserId;
+  }
+) => {
+  return pipe(
+    removeCurrentUser(currentUserId),
+    inputFilter(input),
+    addNotifications(messagesByUserId),
+    sortByMessagesDate(messagesByUserId)
+  )(users);
+};
+
+type UserWithNotifications = User & { notifications: number };
+
+const addNotifications = (messagesByUserId: MessagesByUserId) =>
+  map((user: User): UserWithNotifications => {
+    const notifications =
+      messagesByUserId[user.id]?.filter((m) =>
+        not(equals(m.status, ChatMessageStatus.READ))
+      )?.length ?? 0;
+
+    return {
+      ...user,
+      notifications,
+    };
+  });
+
+const sortByMessagesDate = (messagesByUserId: MessagesByUserId) =>
+  sortBy(
+    (user: UserWithNotifications) =>
+      last(messagesByUserId[user.id] ?? [])?.timestamp ?? false
+  );
+
+const removeCurrentUser = (currentUserId: string) => (users: User[]) =>
+  users.filter(({ id }) => !equals(id, currentUserId));
+
+const inputFilter = (input: string | null) => {
+  if (input === "" || input == null) return identity;
+  return filter(
+    ({ email, firstName, lastName }: User) =>
       email.includes(input) ||
       firstName.includes(input) ||
       lastName.includes(input)
@@ -72,12 +118,14 @@ export const UserChatSearch = () => {
   const { id: currentUserId } = user!;
   const { data: users, isLoading } = useUsers();
 
-  const { activeContactId, setActiveContactId } = useChatStore(
-    ({ activeContactId, setActiveContactId }) => ({
-      activeContactId,
-      setActiveContactId,
-    })
-  );
+  const { activeContactId, setActiveContactId, messagesByUserId } =
+    useChatStore(
+      ({ activeContactId, setActiveContactId, messagesByUserId }) => ({
+        activeContactId,
+        setActiveContactId,
+        messagesByUserId,
+      })
+    );
 
   if (isLoading) return <h4>loading...</h4>;
   if (!users) return <h4>Error</h4>;
@@ -115,19 +163,51 @@ export const UserChatSearch = () => {
           marginLeft: 40,
         }}
       >
-        {filterUsers(users, userSearch).map(({ username, id }) =>
-          currentUserId === id ? null : (
-            <div>
-              <Button
-                onClick={() => {
-                  setActiveContactId(id);
+        {processUsers(users, {
+          input: userSearch,
+          currentUserId,
+          messagesByUserId,
+        }).map(({ username, id, notifications }) => (
+          <div key={id}>
+            <Button
+              style={{
+                display: "flex",
+                // width: "auto",
+                // gap: 100,
+              }}
+              onClick={() => {
+                activeContactId !== id && setActiveContactId(id);
+              }}
+            >
+              <Typography
+                style={{
+                  color: activeContactId !== id ? "black" : "green",
                 }}
+                variant={"h5"}
               >
-                <Typography variant={"h5"}>{username}</Typography>
-              </Button>
-            </div>
-          )
-        )}
+                {username}
+              </Typography>
+              {notifications !== 0 && id !== activeContactId && (
+                <div
+                  style={{
+                    marginLeft: 10,
+                    // display: "inline-block",
+                    padding: 10,
+                    width: 20,
+                    height: 20,
+                    borderRadius: "50%",
+                    backgroundColor: "red",
+                    color: "white",
+                    display: "grid",
+                    placeContent: "center",
+                  }}
+                >
+                  {notifications}
+                </div>
+              )}
+            </Button>
+          </div>
+        ))}
       </div>
     </div>
   );

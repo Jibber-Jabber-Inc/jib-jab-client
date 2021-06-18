@@ -8,7 +8,7 @@ import {
   makeStyles,
   Theme,
 } from "@material-ui/core/styles";
-import { User } from "../entities/entities";
+import { User } from "../entities";
 import { Button } from "@material-ui/core";
 import { useLoggedUser } from "../api/auth";
 import { useHistory } from "react-router-dom";
@@ -118,7 +118,7 @@ export const UserSearch = () => {
         }}
       >
         {filterUsers(users, userSearch).map(({ username, id }) => (
-          <div>
+          <div key={id}>
             <Button
               onClick={() => {
                 history.push(urls.user.byId(id));
