@@ -19,7 +19,7 @@ const App = () => {
   if (isLoading) return <span>Loading...</span>;
 
   const defaultProtectedRouteProps: ProtectedRouteProps = {
-    isAuthenticated: user !== undefined,
+    isAuthenticated: !!user,
     authenticationPath: urls.logIn,
     redirectPath,
     setRedirectPath,

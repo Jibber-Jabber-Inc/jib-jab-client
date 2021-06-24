@@ -120,7 +120,7 @@ const Inside = ({ closeModal }: InsideProps) => {
                   <TextField
                     variant="outlined"
                     margin={"normal"}
-                    type="email"
+                    // type="email"
                     fullWidth
                     label="Email"
                     error={invalid}
