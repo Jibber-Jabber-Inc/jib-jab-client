@@ -124,7 +124,7 @@ export const useLogOut = () => {
     },
     {
       async onSettled() {
-        queryClient.setQueryData("loggedUser", null);
+        queryClient.setQueryData("loggedUser", undefined);
       },
     }
   );

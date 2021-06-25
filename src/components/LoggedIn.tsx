@@ -9,12 +9,11 @@ import { UserSearch } from "./UserSearch";
 import { useChatStore } from "../store/chat";
 import { useEffect } from "react";
 import { useLoggedUser } from "../api/auth";
-// import { useFollowedUsers } from "../api/users";
 import { Chat } from "./Chat";
 
 export const LoggedIn = () => {
   const { data: { id: loggedUserId } = {} } = useLoggedUser();
-  // const { data: { userInfoDto: followedUsers = [] } = {} } = useFollowedUsers();
+
   const initChat = useChatStore((state) => state.initChat);
 
   useEffect(() => {
