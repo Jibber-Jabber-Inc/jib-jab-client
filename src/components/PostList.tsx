@@ -1,8 +1,8 @@
 import React from "react";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
-import { Post } from "../post/Post";
+import { Post } from "./Post";
 import { List, ListItem } from "@material-ui/core";
-import { usePosts } from "../../api/post";
+import { PostData } from "../entities";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -16,19 +16,19 @@ const useStyles = makeStyles(() =>
   })
 );
 
-export const PostList = () => {
-  const classes = useStyles();
-  const { data: posts, isLoading } = usePosts();
+interface PostListProps {
+  posts: PostData[];
+}
 
-  if (isLoading) return <h4>Loading...</h4>;
-  if (!posts) return <h4>Error</h4>;
+export const PostList = ({ posts }: PostListProps) => {
+  const classes = useStyles();
 
   return (
     <div className={classes.root}>
       <List className={classes.list}>
-        {posts.map(({ id, content }) => (
-          <ListItem key={id}>
-            <Post description={content} />
+        {posts.map((post) => (
+          <ListItem key={post.id}>
+            <Post post={post} />
           </ListItem>
         ))}
       </List>

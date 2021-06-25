@@ -8,7 +8,7 @@ export type ProtectedRouteProps = {
   setRedirectPath: (path: string) => void;
 } & RouteProps;
 
-export default function ProtectedRoute({
+export function ProtectedRoute({
   isAuthenticated,
   authenticationPath,
   redirectPath,

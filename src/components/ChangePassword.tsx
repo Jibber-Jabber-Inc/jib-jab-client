@@ -1,15 +1,13 @@
 import { Button, Modal, Typography } from "@material-ui/core";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import React, { useState } from "react";
+import { useState } from "react";
 import * as yup from "yup";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import TextField from "@material-ui/core/TextField";
-import { errorMessages } from "../../constants";
-import { useAppSelector } from "../../store";
-import { useChangePassword } from "../../api/auth";
-import { selectUser } from "../../store/slices/session";
-import { ErrorAlert } from "../ErrorAlert";
+import { errorMessages } from "../constants";
+import { useChangePassword, useLoggedUser } from "../api/auth";
+import { ErrorAlert } from "./ErrorAlert";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -78,9 +76,7 @@ type ChangePasswordFormData = yup.InferType<typeof schema>;
 
 const Inside = ({ closeModal }: InsideProps) => {
   const classes = useStyles();
-
-  const user = useAppSelector(selectUser);
-
+  const { data: user } = useLoggedUser();
   const { control, handleSubmit } = useForm<ChangePasswordFormData>({
     resolver: yupResolver(schema),
     mode: "onBlur",
@@ -91,10 +87,8 @@ const Inside = ({ closeModal }: InsideProps) => {
   if (!user) return null;
 
   const onSubmit = handleSubmit(async (data) => {
-    console.log(data);
-    const { id } = user;
     try {
-      await mutateAsync({ id: id, ...data });
+      await mutateAsync(data);
       closeModal();
     } catch (e) {}
   });
@@ -149,7 +143,7 @@ const Inside = ({ closeModal }: InsideProps) => {
                   className={classes.submit}
                   disabled={isLoading}
                 >
-                  {isLoading ? "Loading..." : "Sign In"}
+                  {isLoading ? "Loading..." : "Confirm"}
                 </Button>
               </div>
             </div>

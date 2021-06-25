@@ -9,11 +9,11 @@ import Container from "@material-ui/core/Container";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { errorMessages, urls } from "../../constants";
+import { errorMessages, urls } from "../constants";
 import { Link, useHistory } from "react-router-dom";
-import { useSignUp } from "../../api/auth";
-import { FormField } from "../forms/FormField";
-import { ErrorAlert } from "../ErrorAlert";
+import { useSignUp } from "../api/auth";
+import { FormField } from "./FormField";
+import { ErrorAlert } from "./ErrorAlert";
 import React from "react";
 
 const useStyles = makeStyles((theme) => ({
@@ -40,10 +40,7 @@ const schema = yup.object({
   username: yup.string().required(errorMessages.required),
   firstName: yup.string().required(errorMessages.required),
   lastName: yup.string().required(errorMessages.required),
-  email: yup
-    .string()
-    .email(errorMessages.email)
-    .required(errorMessages.required),
+  email: yup.string().required(errorMessages.required),
   password: yup.string().required(errorMessages.required),
 });
 
@@ -58,6 +55,13 @@ export const SignUp = () => {
   const { control, handleSubmit } = useForm<SignUpFormData>({
     resolver: yupResolver(schema),
     mode: "onBlur",
+    defaultValues: {
+      username: "",
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+    },
   });
 
   const onSubmit = handleSubmit(async (data) => {
@@ -129,7 +133,9 @@ export const SignUp = () => {
           <Grid container justify="flex-end">
             <Grid item>
               <Link to={urls.logIn}>
-                <MLink variant="body2">Already have an account? Sign in</MLink>
+                <MLink variant="body2" component={"span"}>
+                  Already have an account? Sign in
+                </MLink>
               </Link>
             </Grid>
           </Grid>

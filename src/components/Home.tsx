@@ -1,7 +1,7 @@
 import { Container } from "@material-ui/core";
-import { CreatePost } from "../createPost/CreatePost";
-import { PostList } from "../postList/PostList";
+import { CreatePost } from "./CreatePost";
 import { makeStyles } from "@material-ui/core/styles";
+import { Feed } from "./Feed";
 
 const useStyles = makeStyles({
   root: {
@@ -16,8 +16,11 @@ export const Home = () => {
   const classes = useStyles();
   return (
     <Container className={classes.root}>
+      <div>
+        <h3>My Feed</h3>
+      </div>
       <CreatePost />
-      <PostList />
+      <Feed />
     </Container>
   );
 };

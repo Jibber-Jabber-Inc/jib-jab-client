@@ -1,22 +1,24 @@
-import React from "react";
+import { Badge } from "@material-ui/core";
+import AppBar from "@material-ui/core/AppBar";
+import IconButton from "@material-ui/core/IconButton";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
 import {
   createStyles,
   fade,
   makeStyles,
   Theme,
 } from "@material-ui/core/styles";
-import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
-import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
-import InputBase from "@material-ui/core/InputBase";
-import MenuItem from "@material-ui/core/MenuItem";
-import Menu from "@material-ui/core/Menu";
-import SearchIcon from "@material-ui/icons/Search";
+import { Notifications } from "@material-ui/icons";
 import AccountCircle from "@material-ui/icons/AccountCircle";
-import { useHistory, Link } from "react-router-dom";
-import { urls } from "../../constants";
-import { actions, useAppDispatch } from "../../store";
+import { useState } from "react";
+import { Link, useHistory } from "react-router-dom";
+import { useLoggedUser, useLogOut } from "../api/auth";
+import { urls } from "../constants";
+import { ChatMessageStatus } from "../entities";
+import { useChatStore } from "../store/chat";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -70,27 +72,30 @@ const useStyles = makeStyles((theme: Theme) =>
         width: "20ch",
       },
     },
-    sectionDesktop: {
-      display: "none",
-      [theme.breakpoints.up("md")]: {
-        display: "flex",
-      },
-    },
-    sectionMobile: {
-      display: "flex",
-      [theme.breakpoints.up("md")]: {
-        display: "none",
-      },
-    },
   })
 );
 
 export const NavBar = () => {
   const classes = useStyles();
   const history = useHistory();
-  const dispatch = useAppDispatch();
 
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const { data: { id, username } = {} } = useLoggedUser();
+  const { mutateAsync: logOut } = useLogOut();
+
+  const notifications = useChatStore((state) => {
+    return Object.values(state.messagesByUserId ?? {})
+      .map(
+        (messages) =>
+          messages?.filter(
+            (message) =>
+              message.status === ChatMessageStatus.RECEIVED &&
+              message.senderId !== id
+          ).length ?? 0
+      )
+      .reduce((a, b) => a + b, 0);
+  });
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const isMenuOpen = Boolean(anchorEl);
 
@@ -107,10 +112,10 @@ export const NavBar = () => {
     history.push(urls.viewProfile);
   };
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     handleMenuClose();
-    dispatch(actions.session.setUser(null));
-    history.push(urls.home);
+    await logOut();
+    history.push(urls.logIn);
   };
 
   const menuId = "primary-search-account-menu";
@@ -124,7 +129,7 @@ export const NavBar = () => {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleViewProfile}>Profile</MenuItem>
+      <MenuItem onClick={handleViewProfile}>Settings</MenuItem>
       <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
     </Menu>
   );
@@ -144,21 +149,69 @@ export const NavBar = () => {
               jibber jabber
             </Typography>
           </Link>
-          <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon />
-            </div>
-            <InputBase
-              placeholder="Search…"
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput,
-              }}
-              inputProps={{ "aria-label": "search" }}
-            />
-          </div>
+          <div
+            style={{
+              width: 40,
+            }}
+          />
+          <Link
+            to={urls.searchUsers}
+            style={{
+              color: "white",
+              textDecoration: "none",
+            }}
+          >
+            <Typography variant="h6" noWrap>
+              Search users
+            </Typography>
+          </Link>
+
+          <div
+            style={{
+              width: 40,
+            }}
+          />
+          <Link
+            to={urls.user.byId(id!)}
+            style={{
+              color: "white",
+              textDecoration: "none",
+            }}
+          >
+            <Typography variant="h6" noWrap>
+              My profile
+            </Typography>
+          </Link>
+          <div
+            style={{
+              width: 40,
+            }}
+          />
+          <Link
+            to={urls.chat}
+            style={{
+              color: "white",
+              textDecoration: "none",
+            }}
+          >
+            <Typography variant="h6" noWrap>
+              Chat
+            </Typography>
+          </Link>
           <div className={classes.grow} />
-          <div className={classes.sectionDesktop}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <h2 style={{ marginRight: 10 }}>@{username}</h2>
+            <IconButton color="inherit">
+              <Badge badgeContent={notifications} color="secondary">
+                <Notifications />
+              </Badge>
+            </IconButton>
             <IconButton
               edge="end"
               aria-label="account of current user"

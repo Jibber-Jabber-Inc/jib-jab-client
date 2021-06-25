@@ -1,22 +1,20 @@
-import React from "react";
+import { yupResolver } from "@hookform/resolvers/yup";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
+import Grid from "@material-ui/core/Grid";
 import MLink from "@material-ui/core/Link";
 import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
-import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
+import Typography from "@material-ui/core/Typography";
+import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import { errorMessages, urls } from "../../constants";
 import { Link, useHistory } from "react-router-dom";
-import { useSignIn } from "../../api/auth";
-import { actions, useAppDispatch, useAppSelector } from "../../store";
-import { ErrorAlert } from "../ErrorAlert";
-import { FormField } from "../forms/FormField";
-import { selectRedirectPath } from "../../store/slices/session";
+import * as yup from "yup";
+import { useSignIn } from "../api/auth";
+import { errorMessages, urls } from "../constants";
+import { useSessionStore } from "../store/session";
+import { ErrorAlert } from "./ErrorAlert";
+import { FormField } from "./FormField";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -61,20 +59,24 @@ type SignInFormData = yup.InferType<typeof schema>;
 export const LogIn = () => {
   const classes = useStyles();
   const history = useHistory();
-  const dispatch = useAppDispatch();
-  const redirectPath = useAppSelector(selectRedirectPath);
+  const { redirectPath } = useSessionStore();
 
   const { mutateAsync, isLoading, isError } = useSignIn();
 
   const { control, handleSubmit } = useForm<SignInFormData>({
     resolver: yupResolver(schema),
     mode: "onBlur",
+    defaultValues: {
+      username: "",
+      password: "",
+    },
   });
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      const signInRes = await mutateAsync(data);
-      dispatch(actions.session.setUser(signInRes));
+      console.log("before mutate");
+      await mutateAsync(data);
+      console.log("after mutate");
       history.push(redirectPath);
     } catch (e) {}
   });
@@ -109,10 +111,6 @@ export const LogIn = () => {
                 />
               </Grid>
             </Grid>
-            {/*<FormControlLabel*/}
-            {/*  control={<Checkbox value="remember" color="primary" />}*/}
-            {/*  label="Remember me"*/}
-            {/*/>*/}
             <div>
               <Button
                 type="submit"
@@ -126,14 +124,10 @@ export const LogIn = () => {
               </Button>
             </div>
             <Grid container>
-              <Grid item xs>
-                {/*<MLink href="#" variant="body2">*/}
-                {/*  Forgot password?*/}
-                {/*</MLink>*/}
-              </Grid>
+              <Grid item xs />
               <Grid item>
                 <Link to={urls.signUp}>
-                  <MLink variant="body2">
+                  <MLink variant="body2" component={"span"}>
                     {"Don't have an account? Sign Up"}
                   </MLink>
                 </Link>
